@@ -103,7 +103,7 @@ void RToFApp::processStart()
 
     const char *localAddress = par("localAddress");
 
-    socket.bind(*localAddress ? L3AddressResolver().resolve(localAddress) : L3Address(), localPort);
+    //socket.bind(*localAddress ? L3AddressResolver().resolve(localAddress) : L3Address(), localPort);
 
     socket.bind(localPort);
 
@@ -159,7 +159,7 @@ void RToFApp::sendPacket()
         packet->addTag<FragmentationReq>()->setDontFragment(true);
     */
     const auto& payload = makeShared<ApplicationPacket>();
-    payload->setChunkLength(B(par("messageLength")));
+    payload->setChunkLength(B(4));
     payload->setSequenceNumber(numSent);
     payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
     packet->insertAtBack(payload);
@@ -244,7 +244,6 @@ void RToFApp::socketClosed(UdpSocket *socket)
 void RToFApp::refreshDisplay() const
 {
     ApplicationBase::refreshDisplay();
-
     char buf[100];
     sprintf(buf, "rcvd: %d pks\nsent: %d pks", numReceived, numSent);
     getDisplayString().setTagArg("t", 0, buf);
