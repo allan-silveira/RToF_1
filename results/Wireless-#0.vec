@@ -1,14 +1,14 @@
 version 2
-run Wireless-0-20210127-14:38:28-19364
+run Wireless-0-20210127-14:49:34-59864
 attr configname Wireless
-attr datetime 20210127-14:38:28
+attr datetime 20210127-14:49:34
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 19364
+attr processid 59864
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -19,12 +19,14 @@ param *.host1.numApps 1
 param *.host1.app[0].typename "\"RToFApp\""
 param *.host1.app[0].destAddresses "\"Broadcast\""
 param *.host1.app[0].destPort 5000
+param *.host1.app[0].localPort 6000
 param *.host1.app[0].packetName "\"Send msg\""
 param *.host1.app[0].isReceiver false
 param *.host*.numApps 1
 param *.host*.app[0].typename "\"RToFApp\""
 param *.host*.app[0].destAddresses "\"host1\""
-param *.host*.app[0].destPort 5000
+param *.host*.app[0].destPort 6000
+param *.host*.app[0].localPort 5000
 param *.host*.app[0].isReceiver true
 param *.host*.app[0].packetName "\"Resp msg\""
 param *.host*.wlan[0].typename "\"WirelessInterface\""
@@ -81,9 +83,66 @@ vector 7 Wireless.host4.wlan[0].radio receptionState:vector ETV
 attr interpolationmode sample-hold
 attr source receptionStateChanged
 attr title "Radio reception state, vector"
+vector 8 Wireless.host1.udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetSent
+attr title "packets sent, vector(packetBytes)"
+vector 9 Wireless.host1.lo[0].lo rcvdPkFromHl:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetReceivedFromUpper
+attr title "packets received from higher layer, vector(packetBytes)"
+vector 10 Wireless.host1.lo[0].lo passedUpPk:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetSentToUpper
+attr title "packets passed to higher layer, vector(packetBytes)"
+vector 11 Wireless.host1.wlan[0].mac.queue packetPushed:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet pushed, vector(packetBytes)"
+vector 12 Wireless.host1.wlan[0].mac.queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr source "count(packetPushed) - count(packetPopped) - count(packetRemoved) - count(packetDropped)"
+attr title "queue length, vector"
+vector 13 Wireless.host1.wlan[0].mac.queue packetPopped:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet popped, vector(packetBytes)"
+vector 14 Wireless.host1.wlan[0].mac.queue queueingTime:vector ETV
+attr interpolationmode none
+attr source queueingTime(packetPopped)
+attr title "queueing times, vector"
+attr unit s
+vector 15 Wireless.host1.udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetReceived
+attr title "packets received, vector(packetBytes)"
+vector 16 Wireless.host1.udp droppedPkWrongPort:vector(count) ETV
+attr interpolationmode none
+attr source packetDropReasonIsNoPortFound(packetDropped)
+attr title "packets dropped (wrong port), vector(count)"
+vector 17 Wireless.host1.wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr source transmissionStateChanged
+attr title "Radio transmission state, vector"
+vector 18 Wireless.host2.udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetReceived
+attr title "packets received, vector(packetBytes)"
+vector 19 Wireless.host2.udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr source packetSentToUpper
+attr title "packets passed up, vector(count)"
+vector 20 Wireless.host4.udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetReceived
+attr title "packets received, vector(packetBytes)"
+vector 21 Wireless.host4.udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr source packetSentToUpper
+attr title "packets passed up, vector(count)"
 0	0	0	0
 0	0	0	0
 0	0	0	2
+0	16	0.00051	3
+0	21	0.001056	2
 1	0	0	0
 1	0	0	0
 1	0	0	2
@@ -94,7 +153,33 @@ attr title "Radio reception state, vector"
 3	0	0	0
 3	0	0	2
 4	0	0	1
+4	16	0.00051	0
+4	21	0.001056	1
 5	0	0	1
+5	18	0.00051034017	3
+5	22	0.00105634017	1
 6	0	0	1
+6	20	0.000510864858	2
+6	32	0.001056864858	1
 7	0	0	1
+7	19	0.000510804885	3
+7	27	0.001056804885	1
+8	3	0	12
+9	11	0	32
+10	11	0	32
+11	12	0	59
+12	12	0	1
+12	12	0	0
+13	12	0	59
+14	12	0	0
+15	14	0	12
+16	14	0	1
+17	16	0.00051	1
+17	17	0.00051	2
+17	21	0.001056	1
+17	21	0.001056	0
+18	25	0.00105634017	12
+19	25	0.00105634017	1
+20	30	0.001056804885	12
+21	30	0.001056804885	1
 
