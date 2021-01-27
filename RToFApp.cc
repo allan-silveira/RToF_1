@@ -103,7 +103,7 @@ void RToFApp::processStart()
 
     const char *localAddress = par("localAddress");
 
-    //socket.bind(*localAddress ? L3AddressResolver().resolve(localAddress) : L3Address(), localPort);
+    socket.bind(*localAddress ? L3AddressResolver().resolve(localAddress) : L3Address(), localPort);
 
     socket.bind(localPort);
 
@@ -265,8 +265,9 @@ void RToFApp::handleStartOperation(LifecycleOperation *operation)
         selfMsg->setKind(START);
         scheduleAt(start, selfMsg);
     }*/
-    socket.destroy();
+    processStart();
 }
+
 
 void RToFApp::handleStopOperation(LifecycleOperation *operation)
 {
