@@ -266,13 +266,7 @@ void RToFApp::processPacket(Packet *pk)
     EV_INFO << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
     std::cout << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
 
-    auto signalTimeTag = pk->getTag<SignalTimeInd>();
-    auto startTime = signalTimeTag->getStartTime();
-    EV << "startTime = " << startTime << endl;
-    std::cout << "startTime = " << startTime << endl;
-    auto endTime = signalTimeTag->getEndTime();
-    EV << "endTime = " << endTime << endl;
-    std::cout << "endTime = " << endTime << endl;
+
 
     if(isReceiver){
 
@@ -293,10 +287,26 @@ void RToFApp::processPacket(Packet *pk)
 
         cModule *host = getContainingNode(this);
         std::cout << "host: " << host << endl;
-
         emit(packetSentSignal, packet);
         socket.sendTo(packet, destAddr, destPort);
         numSent++;
+
+    }else{
+        cModule *host = getContainingNode(this);
+        std::cout << "host: " << host << endl;
+
+        auto l3Addresses = pk->getTag<L3AddressInd>();
+        L3Address hostName = l3Addresses->getSrcAddress();
+        //V << "host sender = " << hostName << endl;
+        std::cout << "host sender = " << hostName << endl;
+
+        auto signalTimeTag = pk->getTag<SignalTimeInd>();
+        auto startTime = signalTimeTag->getStartTime();
+        EV << "startTime = " << startTime << endl;
+        std::cout << "startTime = " << startTime << endl;
+        auto endTime = signalTimeTag->getEndTime();
+        EV << "endTime = " << endTime << endl;
+        std::cout << "endTime = " << endTime << endl;
     }
     delete pk;
     numReceived++;
