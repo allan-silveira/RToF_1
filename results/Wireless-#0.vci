@@ -1,15 +1,15 @@
-file 6624 1611769794                                            
+file 13707 1611929362                                           
 version 2
-run Wireless-0-20210127-14:49:34-59864
+run Wireless-0-20210129-11:09:03-145112
 attr configname Wireless
-attr datetime 20210127-14:49:34
+attr datetime 20210129-11:09:03
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 59864
+attr processid 145112
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -19,17 +19,15 @@ param *.host*.ipv4.arp.typename "\"GlobalArp\""
 param *.host1.numApps 1
 param *.host1.app[0].typename "\"RToFApp\""
 param *.host1.app[0].destAddresses "\"Broadcast\""
-param *.host1.app[0].destPort 5000
 param *.host1.app[0].localPort 6000
+param *.host1.app[0].destPort 5000
 param *.host1.app[0].packetName "\"Send msg\""
 param *.host1.app[0].isReceiver false
 param *.host*.numApps 1
 param *.host*.app[0].typename "\"RToFApp\""
-param *.host*.app[0].destAddresses "\"host1\""
-param *.host*.app[0].destPort 6000
 param *.host*.app[0].localPort 5000
+param *.host*.app[0].destPort 6000
 param *.host*.app[0].isReceiver true
-param *.host*.app[0].packetName "\"Resp msg\""
 param *.host*.wlan[0].typename "\"WirelessInterface\""
 param *.radioMedium.typename "\"ApskScalarRadioMedium\""
 param *.radioMedium.backgroundNoise.power -90dBm
@@ -46,8 +44,6 @@ param *.host*.wlan[0].radio.receiver.snirThreshold 4dB
 param *.host*.wlan[0].mac.typename "\"CsmaCaMac\""
 param *.host*.wlan[0].mac.ackTimeout 300us
 param *.host*.wlan[0].mac.useAck true
-param *.host*.wlan[0].mac.fullDuplex false
-param *.host*.wlan[0].radio.receiver.ignoreInterference true
 param *.host*.wlan[0].mac.headerLength 23B
 param *.host*.**.bitrate 1Mbps
 param **.ip.limitedBroadcast true
@@ -131,34 +127,151 @@ vector 19 Wireless.host2.udp passedUpPk:vector(count) ETV
 attr interpolationmode none
 attr source packetSentToUpper
 attr title "packets passed up, vector(count)"
-vector 20 Wireless.host4.udp packetReceived:vector(packetBytes) ETV
+vector 20 Wireless.host2.udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetSent
+attr title "packets sent, vector(packetBytes)"
+vector 21 Wireless.host2.wlan[0].mac.queue packetPushed:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet pushed, vector(packetBytes)"
+vector 22 Wireless.host2.wlan[0].mac.queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr source "count(packetPushed) - count(packetPopped) - count(packetRemoved) - count(packetDropped)"
+attr title "queue length, vector"
+vector 23 Wireless.host2.wlan[0].mac.queue packetPopped:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet popped, vector(packetBytes)"
+vector 24 Wireless.host2.wlan[0].mac.queue queueingTime:vector ETV
+attr interpolationmode none
+attr source queueingTime(packetPopped)
+attr title "queueing times, vector"
+attr unit s
+vector 25 Wireless.host3.udp packetReceived:vector(packetBytes) ETV
 attr interpolationmode none
 attr source packetReceived
 attr title "packets received, vector(packetBytes)"
-vector 21 Wireless.host4.udp passedUpPk:vector(count) ETV
+vector 26 Wireless.host3.udp passedUpPk:vector(count) ETV
 attr interpolationmode none
 attr source packetSentToUpper
 attr title "packets passed up, vector(count)"
-0	5997 60 0 21 0 0.001056 5 0 3 7 17
-1	6057 27 0 0 0 0 3 0 2 2 4
-2	6084 27 0 0 0 0 3 0 2 2 4
-3	6111 27 0 0 0 0 3 0 2 2 4
-4	6138 42 0 21 0 0.001056 3 0 1 2 2
-5	6180 53 0 22 0 0.00105634017 3 1 3 5 11
-6	6233 55 0 32 0 0.001056864858 3 1 2 4 6
-7	6288 55 0 27 0 0.001056804885 3 1 3 5 11
-8	6343 10 3 3 0 0 1 12 12 12 144
-9	6353 11 11 11 0 0 1 32 32 32 1024
-10	6364 12 11 11 0 0 1 32 32 32 1024
-11	6376 12 12 12 0 0 1 59 59 59 3481
-12	6388 22 12 12 0 0 2 0 1 1 1
-13	6410 12 12 12 0 0 1 59 59 59 3481
-14	6422 11 12 12 0 0 1 0 0 0 0
-15	6433 12 14 14 0 0 1 12 12 12 144
-16	6445 11 14 14 0 0 1 1 1 1 1
-17	6456 70 16 21 0.00051 0.001056 4 0 2 4 6
-18	6526 24 25 25 0.00105634017 0.00105634017 1 12 12 12 144
-19	6550 23 25 25 0.00105634017 0.00105634017 1 1 1 1 1
-20	6573 25 30 30 0.001056804885 0.001056804885 1 12 12 12 144
-21	6598 24 30 30 0.001056804885 0.001056804885 1 1 1 1 1
+vector 27 Wireless.host3.udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetSent
+attr title "packets sent, vector(packetBytes)"
+vector 28 Wireless.host3.wlan[0].mac.queue packetPushed:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet pushed, vector(packetBytes)"
+vector 29 Wireless.host3.wlan[0].mac.queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr source "count(packetPushed) - count(packetPopped) - count(packetRemoved) - count(packetDropped)"
+attr title "queue length, vector"
+vector 30 Wireless.host3.wlan[0].mac.queue packetPopped:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet popped, vector(packetBytes)"
+vector 31 Wireless.host3.wlan[0].mac.queue queueingTime:vector ETV
+attr interpolationmode none
+attr source queueingTime(packetPopped)
+attr title "queueing times, vector"
+attr unit s
+vector 32 Wireless.host4.udp packetReceived:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetReceived
+attr title "packets received, vector(packetBytes)"
+vector 33 Wireless.host4.udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr source packetSentToUpper
+attr title "packets passed up, vector(count)"
+vector 34 Wireless.host4.udp packetSent:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetSent
+attr title "packets sent, vector(packetBytes)"
+vector 35 Wireless.host4.wlan[0].mac.queue packetPushed:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet pushed, vector(packetBytes)"
+vector 36 Wireless.host4.wlan[0].mac.queue queueLength:vector ETV
+attr interpolationmode sample-hold
+attr source "count(packetPushed) - count(packetPopped) - count(packetRemoved) - count(packetDropped)"
+attr title "queue length, vector"
+vector 37 Wireless.host4.wlan[0].mac.queue packetPopped:vector(packetBytes) ETV
+attr interpolationmode none
+attr title "packet popped, vector(packetBytes)"
+vector 38 Wireless.host4.wlan[0].mac.queue queueingTime:vector ETV
+attr interpolationmode none
+attr source queueingTime(packetPopped)
+attr title "queueing times, vector"
+attr unit s
+vector 39 Wireless.host3.wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr source transmissionStateChanged
+attr title "Radio transmission state, vector"
+vector 40 Wireless.host2.wlan[0].mac packetDropNotAddressedToUs:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetDropReasonIsNotAddressedToUs(packetDropped)
+attr title "packet drop: not addressed to us, vector(packetBytes)"
+vector 41 Wireless.host1.udp passedUpPk:vector(count) ETV
+attr interpolationmode none
+attr source packetSentToUpper
+attr title "packets passed up, vector(count)"
+vector 42 Wireless.host2.wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr source transmissionStateChanged
+attr title "Radio transmission state, vector"
+vector 43 Wireless.host3.wlan[0].mac packetDropNotAddressedToUs:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetDropReasonIsNotAddressedToUs(packetDropped)
+attr title "packet drop: not addressed to us, vector(packetBytes)"
+vector 44 Wireless.host4.wlan[0].mac packetDropNotAddressedToUs:vector(packetBytes) ETV
+attr interpolationmode none
+attr source packetDropReasonIsNotAddressedToUs(packetDropped)
+attr title "packet drop: not addressed to us, vector(packetBytes)"
+vector 45 Wireless.host4.wlan[0].radio transmissionState:vector ETV
+attr interpolationmode sample-hold
+attr source transmissionStateChanged
+attr title "Radio transmission state, vector"
+0	10360 200 0 124 0 0.004051820624 11 0 3 22 56
+1	10560 73 0 82 0 0.002957870684 5 0 3 7 17
+2	10633 73 0 54 0 0.001892765257 5 0 3 7 17
+3	10706 75 0 110 0 0.003823015739 5 0 3 7 17
+4	10781 322 0 124 0 0.004051820624 15 0 3 17 35
+5	11103 333 0 125 0 0.004052160794 15 0 3 26 62
+6	11436 336 0 127 0 0.004052585881 15 0 3 25 57
+7	11772 336 0 129 0 0.004052625509 15 0 3 25 57
+8	12108 10 3 3 0 0 1 12 12 12 144
+9	12118 11 11 11 0 0 1 32 32 32 1024
+10	12129 12 11 11 0 0 1 32 32 32 1024
+11	12141 12 12 12 0 0 1 59 59 59 3481
+12	12153 22 12 12 0 0 2 0 1 1 1
+13	12175 12 12 12 0 0 1 59 59 59 3481
+14	12187 11 12 12 0 0 1 0 0 0 0
+15	12198 88 14 116 0 0.003823820624 4 12 12 48 576
+16	12286 11 14 14 0 0 1 1 1 1 1
+17	12297 362 16 124 0.00051 0.004051820624 16 0 2 16 24
+18	12659 24 25 25 0.00105634017 0.00105634017 1 12 12 12 144
+19	12683 23 25 25 0.00105634017 0.00105634017 1 1 1 1 1
+20	12706 24 27 27 0.00105634017 0.00105634017 1 12 12 12 144
+21	12730 24 29 29 0.00105634017 0.00105634017 1 59 59 59 3481
+22	12754 46 29 29 0.00105634017 0.00105634017 2 0 1 1 1
+23	12800 24 29 29 0.00105634017 0.00105634017 1 59 59 59 3481
+24	12824 23 29 29 0.00105634017 0.00105634017 1 0 0 0 0
+25	12847 25 33 33 0.001056765257 0.001056765257 1 12 12 12 144
+26	12872 24 33 33 0.001056765257 0.001056765257 1 1 1 1 1
+27	12896 25 35 35 0.001056765257 0.001056765257 1 12 12 12 144
+28	12921 25 37 37 0.001056765257 0.001056765257 1 59 59 59 3481
+29	12946 48 37 37 0.001056765257 0.001056765257 2 0 1 1 1
+30	12994 25 37 37 0.001056765257 0.001056765257 1 59 59 59 3481
+31	13019 24 37 37 0.001056765257 0.001056765257 1 0 0 0 0
+32	13043 25 41 41 0.001056804885 0.001056804885 1 12 12 12 144
+33	13068 24 41 41 0.001056804885 0.001056804885 1 1 1 1 1
+34	13092 25 43 43 0.001056804885 0.001056804885 1 12 12 12 144
+35	13117 25 45 45 0.001056804885 0.001056804885 1 59 59 59 3481
+36	13142 48 45 45 0.001056804885 0.001056804885 2 0 1 1 1
+37	13190 25 45 45 0.001056804885 0.001056804885 1 59 59 59 3481
+38	13215 24 45 45 0.001056804885 0.001056804885 1 0 0 0 0
+39	13239 96 49 54 0.001346765257 0.001892765257 4 0 2 4 6
+40	13335 51 56 112 0.001893232496 0.003823631027 2 59 59 118 6962
+41	13386 73 60 116 0.001893530514 0.003823820624 3 1 3 6 14
+42	13459 96 77 82 0.002411870684 0.002957870684 4 0 2 4 6
+43	13555 25 89 89 0.002958337923 0.002958337923 1 59 59 59 3481
+44	13580 25 91 91 0.002958485972 0.002958485972 1 59 59 59 3481
+45	13605 100 105 110 0.003277015739 0.003823015739 4 0 2 4 6
 

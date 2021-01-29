@@ -8,6 +8,11 @@
 #define BUILDING_DLL
 #define OPP_DLLIMPORT
 
+#include <chrono>
+
+#include <iostream>
+#include <iomanip>
+
 #include "inet/applications/base/ApplicationPacket_m.h"
 #include "RToFApp.h"
 #include "inet/common/ModuleAccess.h"
@@ -153,7 +158,9 @@ L3Address RToFApp::chooseDestAddr()
 void RToFApp::sendPacket()
 {
     std::ostringstream str;
+
     str << packetName << "-" << numSent;
+
     Packet *packet = new Packet(str.str().c_str());
     /*if(dontFragment)
         packet->addTag<FragmentationReq>()->setDontFragment(true);
@@ -164,6 +171,10 @@ void RToFApp::sendPacket()
     payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
     packet->insertAtBack(payload);
     L3Address destAddr = chooseDestAddr();
+
+    cModule *host = getContainingNode(this);
+    std::cout << "host: " << host << endl;
+
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
     numSent++;
@@ -171,19 +182,19 @@ void RToFApp::sendPacket()
 
 
 
-void RToFApp::processSend()
-{
-    sendPacket();
-    simtime_t d = simTime() + par("sendInterval");
-    /*if (stopTime < SIMTIME_ZERO || d < stopTime) {
-        selfMsg->setKind(SEND);
-        scheduleAt(d, selfMsg);
-    }
-    else {
-        selfMsg->setKind(STOP);
-        scheduleAt(stopTime, selfMsg);
-    }*/
-}
+//void RToFApp::processSend()
+//{
+//    sendPacket();
+//    simtime_t d = simTime() + par("sendInterval");
+//    /*if (stopTime < SIMTIME_ZERO || d < stopTime) {
+//        selfMsg->setKind(SEND);
+//        scheduleAt(d, selfMsg);
+//    }
+//    else {
+//        selfMsg->setKind(STOP);
+//        scheduleAt(stopTime, selfMsg);
+//    }*/
+//}
 
 void RToFApp::processStop()
 {
@@ -253,6 +264,40 @@ void RToFApp::processPacket(Packet *pk)
 {
     emit(packetReceivedSignal, pk);
     EV_INFO << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
+    std::cout << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
+
+    auto signalTimeTag = pk->getTag<SignalTimeInd>();
+    auto startTime = signalTimeTag->getStartTime();
+    EV << "startTime = " << startTime << endl;
+    std::cout << "startTime = " << startTime << endl;
+    auto endTime = signalTimeTag->getEndTime();
+    EV << "endTime = " << endTime << endl;
+    std::cout << "endTime = " << endTime << endl;
+
+    if(isReceiver){
+
+        //pegando endereco
+        auto l3Addresses = pk->getTag<L3AddressInd>();
+        L3Address destAddr = l3Addresses->getSrcAddress();
+
+        std::ostringstream str;
+        str << packetName << "-" << numSent;
+
+        Packet *packet = new Packet(str.str().c_str());
+        const auto& payload = makeShared<ApplicationPacket>();
+        payload->setChunkLength(B(4));
+        payload->setSequenceNumber(numSent);
+        payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
+        packet->insertAtBack(payload);
+
+
+        cModule *host = getContainingNode(this);
+        std::cout << "host: " << host << endl;
+
+        emit(packetSentSignal, packet);
+        socket.sendTo(packet, destAddr, destPort);
+        numSent++;
+    }
     delete pk;
     numReceived++;
 }

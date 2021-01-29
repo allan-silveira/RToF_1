@@ -41,6 +41,7 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     //simtime_t stopTime;
     //bool dontFragment = false;
     bool isReceiver;
+    int position;
     const char *packetName = nullptr;
 
     // state
@@ -63,10 +64,11 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     virtual L3Address chooseDestAddr();
     virtual void sendPacket();
     virtual void processPacket(Packet *msg);
+
     virtual void setSocketOptions();
 
     virtual void processStart();
-    virtual void processSend();
+    //virtual void processSend();
     virtual void processStop();
 
     virtual void handleStartOperation(LifecycleOperation *operation) override;

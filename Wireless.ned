@@ -41,10 +41,10 @@ network Wireless
         host2: <default("WirelessHost")> like INetworkNode {
             @display("p=150,270");
         }
-       	host3: <default("WirelessHost")> like INetworkNode {
-       		@display("p=250,125");
-       	}
-       	host4: <default("WirelessHost")> like INetworkNode {
-       		@display("p=250,425");
-       	}
+        host3: <default("WirelessHost")> like INetworkNode {
+            @display("p=241.92001,164.304");
+        }
+        host4: <default("WirelessHost")> like INetworkNode {
+            @display("p=250,425");
+        }
 }
