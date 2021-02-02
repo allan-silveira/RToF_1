@@ -13,6 +13,7 @@
 #include <iostream>
 #include <iomanip>
 
+
 #include "inet/applications/base/ApplicationPacket_m.h"
 #include "RToFApp.h"
 #include "inet/common/ModuleAccess.h"
@@ -46,12 +47,15 @@ RToFApp::~RToFApp()
 void RToFApp::initialize(int stage)
 {
     ApplicationBase::initialize(stage);
+    brodcastTime = 0;
 
     if (stage == INITSTAGE_LOCAL) {
         numSent = 0;
         numReceived = 0;
         WATCH(numSent);
         WATCH(numReceived);
+
+
 
         localPort = par("localPort");
         destPort = par("destPort");
@@ -169,15 +173,19 @@ void RToFApp::sendPacket()
     payload->setChunkLength(B(4));
     payload->setSequenceNumber(numSent);
     payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
+
     packet->insertAtBack(payload);
     L3Address destAddr = chooseDestAddr();
 
     cModule *host = getContainingNode(this);
     std::cout << "host: " << host << endl;
 
+    std::cout << "Broadcast send time: " << simTime() << endl;
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
+    brodcastTime = simTime();
     numSent++;
+
 }
 
 
@@ -281,19 +289,35 @@ void RToFApp::processPacket(Packet *pk)
         const auto& payload = makeShared<ApplicationPacket>();
         payload->setChunkLength(B(4));
         payload->setSequenceNumber(numSent);
+
+        //getting the real position of nodes
+        cModule *host = getContainingNode(this);
+        IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
+        auto real_position = mobility->getCurrentPosition();
+
+
         payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
         packet->insertAtBack(payload);
+        //cModule *host = getContainingNode(this);
 
-
-        cModule *host = getContainingNode(this);
-        std::cout << "host: " << host << endl;
+        //std::cout << "host: " << host << endl;
         emit(packetSentSignal, packet);
         socket.sendTo(packet, destAddr, destPort);
+
+        std::cout << "-------------" << endl;
+        std::cout << "-------------" << endl;
+        std::cout << "host: " << host << endl;
+        std::cout << "real position = " << real_position << endl;
+        std::cout << "sending = " << pk->getSendingTime() << endl;
+        std::cout << "-------------" << endl;
+        std::cout << "-------------" << endl;
+
         numSent++;
 
     }else{
+        std::cout << "-------------" << endl;
         cModule *host = getContainingNode(this);
-        std::cout << "host: " << host << endl;
+        std::cout << "host : " << host << endl;
 
         auto l3Addresses = pk->getTag<L3AddressInd>();
         L3Address hostName = l3Addresses->getSrcAddress();
@@ -304,9 +328,21 @@ void RToFApp::processPacket(Packet *pk)
         auto startTime = signalTimeTag->getStartTime();
         EV << "startTime = " << startTime << endl;
         std::cout << "startTime = " << startTime << endl;
+
         auto endTime = signalTimeTag->getEndTime();
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
+
+        std::cout << "-------------" << endl;
+
+        std::cout << "arrival = " << pk->getArrivalTime() << endl;
+        std::cout << "-------------" << endl;
+
+        auto dist = distanceCalc(simTime());
+        std::cout << "Distance between hosts= " << dist << endl;
+        std::cout << "-------------" << endl;
+        brodcastTime = simTime();
+
     }
     delete pk;
     numReceived++;
@@ -336,7 +372,18 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
     socket.destroy();         //TODO  in real operating systems, program crash detected by OS and OS closes sockets of crashed programs.
 }
 
- // namespace inet
+double RToFApp::distanceCalc(simtime_t finalT)
+{
+    double distance = (299792458 * (finalT - brodcastTime).dbl())/2;
+    return distance;
+}
+
+//void RToFApp::MinMax()
+//{
+//
+//}
+
+// namespace inet
 
 
 

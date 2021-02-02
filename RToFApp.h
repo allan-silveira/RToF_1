@@ -52,7 +52,7 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     // statistics
     int numSent = 0;
     int numReceived = 0;
-
+    simtime_t brodcastTime;
   protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;
@@ -74,6 +74,8 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     virtual void handleStartOperation(LifecycleOperation *operation) override;
     virtual void handleStopOperation(LifecycleOperation *operation) override;
     virtual void handleCrashOperation(LifecycleOperation *operation) override;
+
+    virtual double distanceCalc(simtime_t finalT);
 
     virtual void socketDataArrived(UdpSocket *socket, Packet *packet) override;
     virtual void socketErrorArrived(UdpSocket *socket, Indication *indication) override;
