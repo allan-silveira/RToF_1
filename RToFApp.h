@@ -52,7 +52,7 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     // statistics
     int numSent = 0;
     int numReceived = 0;
-    simtime_t brodcastTime;
+    simtime_t broadcastTime;
   protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;

@@ -47,7 +47,7 @@ RToFApp::~RToFApp()
 void RToFApp::initialize(int stage)
 {
     ApplicationBase::initialize(stage);
-    brodcastTime = 0;
+    broadcastTime = 0;
 
     if (stage == INITSTAGE_LOCAL) {
         numSent = 0;
@@ -180,10 +180,10 @@ void RToFApp::sendPacket()
     cModule *host = getContainingNode(this);
     std::cout << "host: " << host << endl;
 
-    std::cout << "Broadcast send time: " << simTime() << endl;
+
+
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
-    brodcastTime = simTime();
     numSent++;
 
 }
@@ -282,6 +282,15 @@ void RToFApp::processPacket(Packet *pk)
         auto l3Addresses = pk->getTag<L3AddressInd>();
         L3Address destAddr = l3Addresses->getSrcAddress();
 
+        auto signalTimeTag = pk->getTag<SignalTimeInd>();
+        auto testeTempo = signalTimeTag->getStartTime();
+        std::cout << "-------------" << endl;
+        std::cout << "-------------" << endl;
+        std::cout << "--Send Broadcast Time: " << testeTempo << endl;
+        std::cout << "-------------" << endl;
+        std::cout << "-------------" << endl;
+        broadcastTime = testeTempo;
+
         std::ostringstream str;
         str << packetName << "-" << numSent;
 
@@ -295,6 +304,8 @@ void RToFApp::processPacket(Packet *pk)
         IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
         auto real_position = mobility->getCurrentPosition();
 
+        //auto realPosition = payload->addTag<HostPosition>();
+        //realPosition->setPosition(real_position);
 
         payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
         packet->insertAtBack(payload);
@@ -304,15 +315,17 @@ void RToFApp::processPacket(Packet *pk)
         emit(packetSentSignal, packet);
         socket.sendTo(packet, destAddr, destPort);
 
-        std::cout << "-------------" << endl;
-        std::cout << "-------------" << endl;
-        std::cout << "host: " << host << endl;
-        std::cout << "real position = " << real_position << endl;
-        std::cout << "sending = " << pk->getSendingTime() << endl;
-        std::cout << "-------------" << endl;
-        std::cout << "-------------" << endl;
-
-        numSent++;
+//        L3Address hostName = l3Addresses->getSrcAddress();
+//        auto dist = distanceCalc( pk->getSendingTime());
+//        std::cout << "-------------" << endl;
+//        std::cout << "-------------" << endl;
+//        std::cout << "host: " << host << " -- IP:" << hostName << endl;
+//        std::cout << "real position = " << real_position << endl;
+//        std::cout << "sending = " << pk->getSendingTime() << endl;
+//        std::cout << "Distance between hosts= " << dist << endl;
+//        std::cout << "-------------" << endl;
+//        std::cout << "-------------" << endl;
+//        numSent++;
 
     }else{
         std::cout << "-------------" << endl;
@@ -332,16 +345,15 @@ void RToFApp::processPacket(Packet *pk)
         auto endTime = signalTimeTag->getEndTime();
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
-
+        auto dist = distanceCalc( pk->getArrivalTime());
         std::cout << "-------------" << endl;
-
         std::cout << "arrival = " << pk->getArrivalTime() << endl;
-        std::cout << "-------------" << endl;
-
-        auto dist = distanceCalc(simTime());
         std::cout << "Distance between hosts= " << dist << endl;
         std::cout << "-------------" << endl;
-        brodcastTime = simTime();
+
+
+
+        //broadcastTime = pk->getArrivalTime();
 
     }
     delete pk;
@@ -374,7 +386,7 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
 
 double RToFApp::distanceCalc(simtime_t finalT)
 {
-    double distance = (299792458 * (finalT - brodcastTime).dbl())/2;
+    double distance = (299792458 * (finalT - broadcastTime).dbl())/2;
     return distance;
 }
 
