@@ -13,6 +13,7 @@
 #include <iostream>
 #include <iomanip>
 
+#include <vector>
 
 #include "inet/applications/base/ApplicationPacket_m.h"
 #include "RToFApp.h"
@@ -47,7 +48,9 @@ RToFApp::~RToFApp()
 void RToFApp::initialize(int stage)
 {
     ApplicationBase::initialize(stage);
-    broadcastTime = 0;
+    broadcastTime = 1;
+    std::vector<double> xVector;
+    std::vector<double> yVector;
 
     if (stage == INITSTAGE_LOCAL) {
         numSent = 0;
@@ -180,10 +183,9 @@ void RToFApp::sendPacket()
     cModule *host = getContainingNode(this);
     std::cout << "host: " << host << endl;
 
-
-
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
+
     numSent++;
 
 }
@@ -275,21 +277,14 @@ void RToFApp::processPacket(Packet *pk)
     std::cout << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
 
 
-
     if(isReceiver){
 
-        //pegando endereco
+
+        //getting address
         auto l3Addresses = pk->getTag<L3AddressInd>();
         L3Address destAddr = l3Addresses->getSrcAddress();
 
         auto signalTimeTag = pk->getTag<SignalTimeInd>();
-        auto testeTempo = signalTimeTag->getStartTime();
-        std::cout << "-------------" << endl;
-        std::cout << "-------------" << endl;
-        std::cout << "--Send Broadcast Time: " << testeTempo << endl;
-        std::cout << "-------------" << endl;
-        std::cout << "-------------" << endl;
-        broadcastTime = testeTempo;
 
         std::ostringstream str;
         str << packetName << "-" << numSent;
@@ -303,17 +298,27 @@ void RToFApp::processPacket(Packet *pk)
         cModule *host = getContainingNode(this);
         IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
         auto real_position = mobility->getCurrentPosition();
+        double x = mobility->getCurrentPosition().x;
+        double y = mobility->getCurrentPosition().y;
 
-        //auto realPosition = payload->addTag<HostPosition>();
-        //realPosition->setPosition(real_position);
+        packet->setName(ConvertDoubleToString(x, y));
 
-        payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
+        packet->setTimestamp(signalTimeTag->getStartTime());
+
+        std::cout << "T-E-S-T: " << signalTimeTag->getStartTime() <<endl;
+        std::cout << "T-E-S-T: " << signalTimeTag->getEndTime() <<endl;
+
+        //payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
+        auto tags=payload->addTag<CreationTimeTag>();
+        tags->setCreationTime(signalTimeTag->getEndTime());
+
+
         packet->insertAtBack(payload);
-        //cModule *host = getContainingNode(this);
 
-        //std::cout << "host: " << host << endl;
         emit(packetSentSignal, packet);
         socket.sendTo(packet, destAddr, destPort);
+
+
 
 //        L3Address hostName = l3Addresses->getSrcAddress();
 //        auto dist = distanceCalc( pk->getSendingTime());
@@ -325,10 +330,17 @@ void RToFApp::processPacket(Packet *pk)
 //        std::cout << "Distance between hosts= " << dist << endl;
 //        std::cout << "-------------" << endl;
 //        std::cout << "-------------" << endl;
-//        numSent++;
+        numSent++;
 
+        std::cout << "real position->> X = " << x << " e Y = "<<y<<endl;
     }else{
+        saveTime(pk->getTimestamp());
+        auto signalTimeTag = pk->getTag<SignalTimeInd>();
+
         std::cout << "-------------" << endl;
+        std::cout << "Broadcast time: " << broadcastTime << endl;
+        std::cout << "-T-E-S-T::" << pk->getCreationTime() << endl;
+
         cModule *host = getContainingNode(this);
         std::cout << "host : " << host << endl;
 
@@ -336,24 +348,17 @@ void RToFApp::processPacket(Packet *pk)
         L3Address hostName = l3Addresses->getSrcAddress();
         //V << "host sender = " << hostName << endl;
         std::cout << "host sender = " << hostName << endl;
+        std::cout << "position host sender = " << pk->getFullName() << endl;
 
-        auto signalTimeTag = pk->getTag<SignalTimeInd>();
-        auto startTime = signalTimeTag->getStartTime();
-        EV << "startTime = " << startTime << endl;
-        std::cout << "startTime = " << startTime << endl;
 
         auto endTime = signalTimeTag->getEndTime();
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
-        auto dist = distanceCalc( pk->getArrivalTime());
-        std::cout << "-------------" << endl;
+        auto dist = distanceCalc( pk->getCreationTime());
+
         std::cout << "arrival = " << pk->getArrivalTime() << endl;
         std::cout << "Distance between hosts= " << dist << endl;
         std::cout << "-------------" << endl;
-
-
-
-        //broadcastTime = pk->getArrivalTime();
 
     }
     delete pk;
@@ -386,14 +391,49 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
 
 double RToFApp::distanceCalc(simtime_t finalT)
 {
-    double distance = (299792458 * (finalT - broadcastTime).dbl())/2;
+    double distance = ((299792458 * (finalT - broadcastTime).dbl())/2) - 81842.34103; //81842.34103 overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
 //void RToFApp::MinMax()
 //{
+//    double di = 11;
 //
 //}
+//
+
+void RToFApp::saveTime(simtime_t broad){
+    if(broadcastTime > broad){
+        broadcastTime = broad;
+    }else{
+        broadcastTime = broadcastTime;
+    }
+}
+
+void RToFApp::savePoints(double xi, double yi){
+    xVector.push_back(xi);
+    yVector.push_back(yi);
+
+    std::cout << "xVector = { ";
+       for (int n : xVector) {
+           std::cout << n << ", ";
+       }
+       std::cout << "}; \n";
+
+//    for (unsigned int i = 0; i < xVector.size(); i++)
+//    {
+//        std::cout << "VECTORRRR X: " << xVector[i] <<"," << endl;
+//        std::cout << "VECTORRRR Y: " << yVector[i] <<"," << endl;
+//    }
+//    std::cout << " " << endl;
+}
+
+const char* RToFApp::ConvertDoubleToString(double value1, double value2){
+    std::stringstream ss ;
+    ss << value1 << "," << value2;
+    const char* str = ss.str().c_str();
+    return str;
+}
 
 // namespace inet
 

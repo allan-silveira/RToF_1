@@ -53,6 +53,10 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     int numSent = 0;
     int numReceived = 0;
     simtime_t broadcastTime;
+    std::vector<double> xVector;
+    std::vector<double> yVector;
+
+
   protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;
@@ -71,11 +75,15 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     //virtual void processSend();
     virtual void processStop();
 
+
     virtual void handleStartOperation(LifecycleOperation *operation) override;
     virtual void handleStopOperation(LifecycleOperation *operation) override;
     virtual void handleCrashOperation(LifecycleOperation *operation) override;
 
     virtual double distanceCalc(simtime_t finalT);
+    virtual void savePoints(double xi, double yi);
+    virtual const char* ConvertDoubleToString(double value1, double value2);
+    virtual void saveTime(simtime_t broad);
 
     virtual void socketDataArrived(UdpSocket *socket, Packet *packet) override;
     virtual void socketErrorArrived(UdpSocket *socket, Indication *indication) override;

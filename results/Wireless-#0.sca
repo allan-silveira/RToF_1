@@ -1,14 +1,14 @@
 version 2
-run Wireless-0-20210204-09:15:13-3692
+run Wireless-0-20210215-16:03:53-6260
 attr configname Wireless
-attr datetime 20210204-09:15:13
+attr datetime 20210215-16:03:53
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 3692
+attr processid 6260
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -1200,7 +1200,7 @@ scalar Wireless.host2.udp droppedPkBadChecksum:count 0
 attr interpolationmode none
 attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
 attr title "packets dropped (checksum error), count"
-scalar Wireless.host2.app[0] "packets sent" 0
+scalar Wireless.host2.app[0] "packets sent" 1
 scalar Wireless.host2.app[0] "packets received" 1
 scalar Wireless.host3.lo[0].lo rcvdPkFromHl:count 0
 attr interpolationmode none
@@ -1694,7 +1694,7 @@ scalar Wireless.host3.udp droppedPkBadChecksum:count 0
 attr interpolationmode none
 attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
 attr title "packets dropped (checksum error), count"
-scalar Wireless.host3.app[0] "packets sent" 0
+scalar Wireless.host3.app[0] "packets sent" 1
 scalar Wireless.host3.app[0] "packets received" 1
 scalar Wireless.host4.lo[0].lo rcvdPkFromHl:count 0
 attr interpolationmode none
@@ -2231,6 +2231,6 @@ scalar Wireless.host4.udp droppedPkBadChecksum:count 0
 attr interpolationmode none
 attr source packetDropReasonIsIncorrectlyReceived(packetDropped)
 attr title "packets dropped (checksum error), count"
-scalar Wireless.host4.app[0] "packets sent" 0
+scalar Wireless.host4.app[0] "packets sent" 1
 scalar Wireless.host4.app[0] "packets received" 1
 
