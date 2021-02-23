@@ -48,7 +48,6 @@ RToFApp::~RToFApp()
 void RToFApp::initialize(int stage)
 {
     ApplicationBase::initialize(stage);
-    broadcastTime = 1;
     std::vector<double> xVector;
     std::vector<double> yVector;
 
@@ -186,6 +185,8 @@ void RToFApp::sendPacket()
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
 
+    broadcastTime = simTime();
+
     numSent++;
 
 }
@@ -276,7 +277,6 @@ void RToFApp::processPacket(Packet *pk)
     EV_INFO << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
     std::cout << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
 
-
     if(isReceiver){
 
 
@@ -312,13 +312,10 @@ void RToFApp::processPacket(Packet *pk)
         auto tags=payload->addTag<CreationTimeTag>();
         tags->setCreationTime(signalTimeTag->getEndTime());
 
-
         packet->insertAtBack(payload);
 
         emit(packetSentSignal, packet);
         socket.sendTo(packet, destAddr, destPort);
-
-
 
 //        L3Address hostName = l3Addresses->getSrcAddress();
 //        auto dist = distanceCalc( pk->getSendingTime());
@@ -334,7 +331,7 @@ void RToFApp::processPacket(Packet *pk)
 
         std::cout << "real position->> X = " << x << " e Y = "<<y<<endl;
     }else{
-        saveTime(pk->getTimestamp());
+        //saveTime(pk->getTimestamp());
         auto signalTimeTag = pk->getTag<SignalTimeInd>();
 
         std::cout << "-------------" << endl;
@@ -348,18 +345,20 @@ void RToFApp::processPacket(Packet *pk)
         L3Address hostName = l3Addresses->getSrcAddress();
         //V << "host sender = " << hostName << endl;
         std::cout << "host sender = " << hostName << endl;
-        std::cout << "position host sender = " << pk->getFullName() << endl;
+        //std::cout << "position host sender = " << pk->getFullName() << endl;
 
+        //savePoints( pk->getFullName());
 
         auto endTime = signalTimeTag->getEndTime();
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
-        auto dist = distanceCalc( pk->getCreationTime());
+        auto dist = distanceCalc(pk->getArrivalTime());
 
         std::cout << "arrival = " << pk->getArrivalTime() << endl;
         std::cout << "Distance between hosts= " << dist << endl;
         std::cout << "-------------" << endl;
 
+        Calibration(broadcastTime, pk->getArrivalTime());
     }
     delete pk;
     numReceived++;
@@ -391,48 +390,61 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
 
 double RToFApp::distanceCalc(simtime_t finalT)
 {
-    double distance = ((299792458 * (finalT - broadcastTime).dbl())/2) - 81842.34103; //81842.34103 overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
+    double distance = ((299792458 * ((finalT - broadcastTime).dbl() - 0.001512000001))/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
-//void RToFApp::MinMax()
+//void RToFApp::MinMax(double di)
 //{
 //    double di = 11;
 //
 //}
 //
 
-void RToFApp::saveTime(simtime_t broad){
-    if(broadcastTime > broad){
-        broadcastTime = broad;
-    }else{
-        broadcastTime = broadcastTime;
+
+void RToFApp::savePoints(const char *local){
+    char loc[strlen(local) + 1];
+    strcpy(loc, local);
+    char x[2];
+    char y[2];
+    char aux[] = ",";
+    int j = 0;
+    int k = 0;
+    for(int i = 0; i <= strlen(loc); i ++){
+        if(loc[i] == aux[0]){
+            y[k] = loc[i+1];
+            k++;
+        }
+        else{
+            x[j] = loc[i];
+            j++;
+        }
+        k = 0;
+        j = 0;
     }
+    xVector.push_back(std::stod(x));
+    yVector.push_back(std::stod(y));
+
+    for (unsigned int i = 0; i < xVector.size(); i++)
+    {
+        std::cout << "VECTORRRR X: " << xVector[i] <<"," << endl;
+        std::cout << "VECTORRRR Y: " << yVector[i] <<"," << endl;
+    }
+    std::cout << " " << endl;
 }
 
-void RToFApp::savePoints(double xi, double yi){
-    xVector.push_back(xi);
-    yVector.push_back(yi);
 
-    std::cout << "xVector = { ";
-       for (int n : xVector) {
-           std::cout << n << ", ";
-       }
-       std::cout << "}; \n";
-
-//    for (unsigned int i = 0; i < xVector.size(); i++)
-//    {
-//        std::cout << "VECTORRRR X: " << xVector[i] <<"," << endl;
-//        std::cout << "VECTORRRR Y: " << yVector[i] <<"," << endl;
-//    }
-//    std::cout << " " << endl;
-}
 
 const char* RToFApp::ConvertDoubleToString(double value1, double value2){
     std::stringstream ss ;
     ss << value1 << "," << value2;
     const char* str = ss.str().c_str();
     return str;
+}
+
+void RToFApp::Calibration(simtime_t StartT, simtime_t EndT){
+    auto overhead = (EndT - StartT) - ((2*1) / 299792458.0) ; //((2 * 1) / 299792458) here we have the calc of real time, so we subtract this real time from time with overhead and we find the overhead
+    std::cout << "overhead = " << overhead << endl;
 }
 
 // namespace inet

@@ -1,14 +1,14 @@
 version 2
-run Wireless-0-20210215-16:03:53-6260
+run Wireless-0-20210223-11:21:37-60920
 attr configname Wireless
-attr datetime 20210215-16:03:53
+attr datetime 20210223-11:21:37
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 6260
+attr processid 60920
 attr repetition 0
 attr replication #0
 attr resultdir results
