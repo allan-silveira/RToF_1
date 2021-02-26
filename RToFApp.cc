@@ -57,7 +57,7 @@ void RToFApp::initialize(int stage)
         WATCH(numSent);
         WATCH(numReceived);
 
-
+        aux = par("aux");
 
         localPort = par("localPort");
         destPort = par("destPort");
@@ -182,10 +182,13 @@ void RToFApp::sendPacket()
     cModule *host = getContainingNode(this);
     std::cout << "host: " << host << endl;
 
+    listener = new Listener();
+    host->subscribe("transmissionStarted", listener);
+
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
 
-    broadcastTime = simTime();
+    //broadcastTime = simTime();
 
     numSent++;
 
@@ -277,9 +280,10 @@ void RToFApp::processPacket(Packet *pk)
     EV_INFO << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
     std::cout << "Received packet: " << UdpSocket::getReceivedPacketInfo(pk) << endl;
 
+    cModule *host = getSystemModule()->getSubmodule("host1");
+    host->unsubscribe("transmissionStarted", listener);
+
     if(isReceiver){
-
-
         //getting address
         auto l3Addresses = pk->getTag<L3AddressInd>();
         L3Address destAddr = l3Addresses->getSrcAddress();
@@ -335,7 +339,8 @@ void RToFApp::processPacket(Packet *pk)
         auto signalTimeTag = pk->getTag<SignalTimeInd>();
 
         std::cout << "-------------" << endl;
-        std::cout << "Broadcast time: " << broadcastTime << endl;
+        std::cout << "Broadcast time: " << IniTime << endl;
+        broadcastTime = IniTime;
         std::cout << "-T-E-S-T::" << pk->getCreationTime() << endl;
 
         cModule *host = getContainingNode(this);
@@ -358,7 +363,10 @@ void RToFApp::processPacket(Packet *pk)
         std::cout << "Distance between hosts= " << dist << endl;
         std::cout << "-------------" << endl;
 
-        Calibration(broadcastTime, pk->getArrivalTime());
+        if(aux == 1){
+            Calibration(broadcastTime, pk->getArrivalTime());
+        }
+
     }
     delete pk;
     numReceived++;
@@ -390,7 +398,7 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
 
 double RToFApp::distanceCalc(simtime_t finalT)
 {
-    double distance = ((299792458 * ((finalT - broadcastTime).dbl() - 0.001512000001))/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
+    double distance = ((299792458 * ((finalT - broadcastTime).dbl() - 0.001322000001))/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
@@ -422,9 +430,10 @@ void RToFApp::savePoints(const char *local){
         k = 0;
         j = 0;
     }
-    xVector.push_back(std::stod(x));
-    yVector.push_back(std::stod(y));
-
+    std::cout << "----TESTE X: " << x << endl;
+    std::cout << "----TESTE Y: " << y << endl;
+    xVector.push_back(atof(x));
+    yVector.push_back(atof(y));
     for (unsigned int i = 0; i < xVector.size(); i++)
     {
         std::cout << "VECTORRRR X: " << xVector[i] <<"," << endl;
@@ -447,6 +456,10 @@ void RToFApp::Calibration(simtime_t StartT, simtime_t EndT){
     std::cout << "overhead = " << overhead << endl;
 }
 
+void RToFApp::setIniTime(simtime_t time)
+{
+    IniTime = time;
+}
 // namespace inet
 
 

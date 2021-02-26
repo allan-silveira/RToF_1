@@ -3,7 +3,6 @@
 	<name>RToF_1</name>
 	<comment></comment>
 	<projects>
-		<project>eigen-master</project>
 		<project>inet</project>
 	</projects>
 	<buildSpec>

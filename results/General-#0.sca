@@ -1,14 +1,14 @@
 version 2
-run General-0-20210223-11:16:14-64740
+run General-0-20210225-21:21:37-146916
 attr configname General
-attr datetime 20210223-11:16:14
+attr datetime 20210225-21:21:37
 attr experiment General
 attr inifile calibration.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Calibration
-attr processid 64740
+attr processid 146916
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -22,6 +22,7 @@ param *.host1.app[0].localPort 6000
 param *.host1.app[0].destPort 5000
 param *.host1.app[0].packetName "\"Send msg\""
 param *.host1.app[0].isReceiver false
+param *.host1.app[0].aux 1
 param *.host*.numApps 1
 param *.host*.app[0].typename "\"RToFApp\""
 param *.host*.app[0].localPort 5000

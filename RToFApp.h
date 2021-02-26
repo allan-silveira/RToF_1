@@ -7,12 +7,15 @@
 
 #ifndef RTOFAPP_H_
 #define RTOFAPP_H_
+
 #define BUILDING_DLL
 #define OPP_DLLIMPORT
+
 
 #include <vector>
 
 #include "inet/common/INETDefs.h"
+#include "Listener.h"
 
 #include "inet/applications/base/ApplicationBase.h"
 #include "inet/transportlayer/contract/udp/UdpSocket.h"
@@ -32,7 +35,7 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
 {
   protected:
     enum SelfMsgKinds { START = 1, SEND, STOP };
-
+    int aux = 0;
     // parameters
     std::vector<L3Address> destAddresses;
     std::vector<std::string> destAddressStr;
@@ -56,6 +59,10 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     std::vector<double> xVector;
     std::vector<double> yVector;
 
+    //Listener
+    simtime_t IniTime;
+    simsignal_t transmissionStarted;
+    Listener *listener;
 
   protected:
     virtual int numInitStages() const override { return NUM_INIT_STAGES; }
@@ -63,6 +70,8 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     virtual void handleMessageWhenUp(cMessage *msg) override;
     virtual void finish() override;
     virtual void refreshDisplay() const override;
+
+
 
     // chooses random destination address
     virtual L3Address chooseDestAddr();
@@ -92,6 +101,7 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
   public:
     RToFApp() {}
     ~RToFApp();
+    void setIniTime(simtime_t iniTime);
 };
 
 #endif /* RTOFAPP_H_ */
