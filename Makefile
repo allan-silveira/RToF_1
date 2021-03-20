@@ -30,10 +30,11 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/Listener.o $O/RToFApp.o
+OBJS = $O/CsmaCaMacRToF.o $O/Listener.o $O/RToFApp.o $O/CsmaCaMacRToFHeader_m.o
 
 # Message files
-MSGFILES =
+MSGFILES = \
+    CsmaCaMacRToFHeader.msg
 
 # SM files
 SMFILES =
@@ -82,6 +83,9 @@ endif
 #------------------------------------------------------------------------------
 # User-supplied makefile fragment(s)
 # >>>
+# inserted from file 'makefrag':
+MSGC:=$(MSGC) --msg6
+
 # <<<
 #------------------------------------------------------------------------------
 
