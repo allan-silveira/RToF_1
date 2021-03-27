@@ -30,7 +30,15 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/CsmaCaMacRToF.o $O/EthernetCRCRToF.o $O/Listener.o $O/RToFApp.o $O/CsmaCaMacRToFHeader_m.o
+OBJS = \
+    $O/CsmaCaMacRToF.o \
+    $O/CsmaCaMacRToFHeaderSerializer.o \
+    $O/CsmaCaMacRToFProtocolDissector.o \
+    $O/CsmaCaMacRToFProtocolPrinter.o \
+    $O/EthernetCRCRToF.o \
+    $O/Listener.o \
+    $O/RToFApp.o \
+    $O/CsmaCaMacRToFHeader_m.o
 
 # Message files
 MSGFILES = \
@@ -83,6 +91,9 @@ endif
 #------------------------------------------------------------------------------
 # User-supplied makefile fragment(s)
 # >>>
+# inserted from file 'makefrag':
+MSGC:=$(MSGC) --msg6
+
 # <<<
 #------------------------------------------------------------------------------
 

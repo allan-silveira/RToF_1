@@ -1,14 +1,14 @@
 version 2
-run Wireless-0-20210327-14:46:35-100704
+run Wireless-0-20210327-20:08:45-164524
 attr configname Wireless
-attr datetime 20210327-14:46:35
+attr datetime 20210327-20:08:45
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 100704
+attr processid 164524
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -46,8 +46,6 @@ param *.host*.wlan[0].mac.useAck true
 param *.host*.wlan[0].mac.headerLength 23B
 param *.host*.**.bitrate 1Mbps
 param **.ip.limitedBroadcast true
-param **.visualizer.mediumVisualizer.displaySignals true
-param **.visualizer.physicalLinkVisualizer.displayLinks true
 
 vector 0 Wireless.host1.wlan[0].radio radioMode:vector ETV
 attr interpolationmode sample-hold

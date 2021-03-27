@@ -1,15 +1,15 @@
-file 5541 1616867201                                            
+file 5421 1616886537                                            
 version 2
-run Wireless-0-20210327-14:46:35-100704
+run Wireless-0-20210327-20:08:45-164524
 attr configname Wireless
-attr datetime 20210327-14:46:35
+attr datetime 20210327-20:08:45
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 100704
+attr processid 164524
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -47,8 +47,6 @@ param *.host*.wlan[0].mac.useAck true
 param *.host*.wlan[0].mac.headerLength 23B
 param *.host*.**.bitrate 1Mbps
 param **.ip.limitedBroadcast true
-param **.visualizer.mediumVisualizer.displaySignals true
-param **.visualizer.physicalLinkVisualizer.displayLinks true
 
 vector 0 Wireless.host1.wlan[0].radio radioMode:vector ETV
 attr interpolationmode sample-hold
@@ -121,22 +119,22 @@ vector 17 Wireless.host1.wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr source transmissionStateChanged
 attr title "Radio transmission state, vector"
-0	5233 43 0 16 0 0.00051 4 0 3 5 13
-1	5276 27 0 0 0 0 3 0 2 2 4
-2	5303 27 0 0 0 0 3 0 2 2 4
-3	5330 27 0 0 0 0 3 0 2 2 4
-4	5357 25 0 16 0 0.00051 2 0 1 1 1
-5	5382 9 0 0 0 0 1 1 1 1 1
-6	5391 9 0 0 0 0 1 1 1 1 1
-7	5400 9 0 0 0 0 1 1 1 1 1
-8	5409 10 3 3 0 0 1 12 12 12 144
-9	5419 11 11 11 0 0 1 32 32 32 1024
-10	5430 12 11 11 0 0 1 32 32 32 1024
-11	5442 12 12 12 0 0 1 59 59 59 3481
-12	5454 22 12 12 0 0 2 0 1 1 1
-13	5476 12 12 12 0 0 1 59 59 59 3481
-14	5488 11 12 12 0 0 1 0 0 0 0
-15	5499 12 14 14 0 0 1 12 12 12 144
-16	5511 11 14 14 0 0 1 1 1 1 1
-17	5522 17 16 16 0.00051 0.00051 1 1 1 1 1
+0	5113 43 0 16 0 0.00051 4 0 3 5 13
+1	5156 27 0 0 0 0 3 0 2 2 4
+2	5183 27 0 0 0 0 3 0 2 2 4
+3	5210 27 0 0 0 0 3 0 2 2 4
+4	5237 25 0 16 0 0.00051 2 0 1 1 1
+5	5262 9 0 0 0 0 1 1 1 1 1
+6	5271 9 0 0 0 0 1 1 1 1 1
+7	5280 9 0 0 0 0 1 1 1 1 1
+8	5289 10 3 3 0 0 1 12 12 12 144
+9	5299 11 11 11 0 0 1 32 32 32 1024
+10	5310 12 11 11 0 0 1 32 32 32 1024
+11	5322 12 12 12 0 0 1 59 59 59 3481
+12	5334 22 12 12 0 0 2 0 1 1 1
+13	5356 12 12 12 0 0 1 59 59 59 3481
+14	5368 11 12 12 0 0 1 0 0 0 0
+15	5379 12 14 14 0 0 1 12 12 12 144
+16	5391 11 14 14 0 0 1 1 1 1 1
+17	5402 17 16 16 0.00051 0.00051 1 1 1 1 1
 
