@@ -20,7 +20,7 @@
 #include "inet/common/ModuleAccess.h"
 #include "inet/common/ProtocolGroup.h"
 #include "inet/common/ProtocolTag_m.h"
-#include "inet/common/checksum/EthernetCRC.h"
+#include "EthernetCRCRToF.h"
 #include "inet/common/packet/chunk/ByteCountChunk.h"
 #include "inet/linklayer/common/InterfaceTag_m.h"
 #include "inet/linklayer/common/MacAddressTag_m.h"
@@ -399,9 +399,6 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
     int userPriority = userPriorityReq == nullptr ? UP_BE : userPriorityReq->getUserPriority();
     macHeader->setPriority(userPriority == -1 ? UP_BE : userPriority);
     frame->insertAtFront(macHeader);
-
-    //frame->insertAtFront(backoffPeriod);
-
     auto macTrailer = makeShared<CsmaCaMacRToFTrailer>();
     macTrailer->setFcsMode(fcsMode);
     if (fcsMode == FCS_COMPUTED)
@@ -633,10 +630,10 @@ bool CsmaCaMacRToF::isFcsOk(Packet *frame)
                 return true;
             case FCS_COMPUTED: {
                 const auto& fcsBytes = frame->peekDataAt<BytesChunk>(B(0), frame->getDataLength() - trailer->getChunkLength());
-                int bufferLength = B(fcsBytes->getChunkLength()).get(); //modifiquei
-                char const* buffer = new uint8_t[bufferLength];
+                auto bufferLength = B(fcsBytes->getChunkLength()).get();
+                uint8_t* buffer = new uint8_t[bufferLength];
                 fcsBytes->copyToBuffer(buffer, bufferLength);
-                auto computedFcs = ethernetCRC(buffer, bufferLength);
+                auto computedFcs = ethernetCRCRToF(buffer, bufferLength);
                 delete [] buffer;
                 return computedFcs == trailer->getFcs();
             }
@@ -649,9 +646,9 @@ bool CsmaCaMacRToF::isFcsOk(Packet *frame)
 uint32_t CsmaCaMacRToF::computeFcs(const Ptr<const BytesChunk>& bytes)
 {
     auto bufferLength = B(bytes->getChunkLength()).get();
-    auto buffer = new uint8_t[bufferLength];
+    uint8_t* buffer = new uint8_t[bufferLength];
     bytes->copyToBuffer(buffer, bufferLength);
-    auto computedFcs = ethernetCRC(buffer, bufferLength);
+    auto computedFcs = ethernetCRCRToF(buffer, bufferLength);
     delete [] buffer;
     return computedFcs;
 }
@@ -667,4 +664,5 @@ void CsmaCaMacRToF::handleCrashOperation(LifecycleOperation *operation)
     MacProtocolBase::handleCrashOperation(operation);
     resetTransmissionVariables();
 }
+
 // namespace inet

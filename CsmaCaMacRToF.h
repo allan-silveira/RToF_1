@@ -35,7 +35,7 @@
 #include "CsmaCaMacRToFHeader_m.h"
 #include "inet/physicallayer/contract/packetlevel/IRadio.h"
 
-namespace inet {
+using namespace inet;
 
 class INET_API CsmaCaMacRToF : public MacProtocolBase
 {
@@ -210,6 +210,6 @@ class INET_API CsmaCaMacRToF : public MacProtocolBase
     virtual void handleCrashOperation(LifecycleOperation *operation) override;
 };
 
-} // namespace inet
+// namespace inet
 
 #endif // ifndef __INET_CSMAMACRTOF_H
