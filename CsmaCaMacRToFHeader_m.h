@@ -60,6 +60,7 @@ enum CsmaCaMacRToFHeaderType {
  *     uint8_t headerLengthField;    // header length in bytes, max value is 255 (1 byte)
  *     MacAddress transmitterAddress;    // (6 byte)
  *     MacAddress receiverAddress;    // (6 byte)
+ *     simtime_t backoffTime;
  * }
  * </pre>
  */
@@ -70,6 +71,7 @@ class CsmaCaMacRToFHeader : public ::inet::FieldsChunk
     uint8_t headerLengthField = 0;
     MacAddress transmitterAddress;
     MacAddress receiverAddress;
+    omnetpp::simtime_t backoffTime = SIMTIME_ZERO;
 
   private:
     void copy(const CsmaCaMacRToFHeader& other);
@@ -98,13 +100,15 @@ class CsmaCaMacRToFHeader : public ::inet::FieldsChunk
     virtual const MacAddress& getReceiverAddress() const;
     virtual MacAddress& getReceiverAddressForUpdate() { handleChange();return const_cast<MacAddress&>(const_cast<CsmaCaMacRToFHeader*>(this)->getReceiverAddress());}
     virtual void setReceiverAddress(const MacAddress& receiverAddress);
+    virtual omnetpp::simtime_t getBackoffTime() const;
+    virtual void setBackoffTime(omnetpp::simtime_t backoffTime);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFHeader& obj) {obj.parsimPack(b);}
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFHeader& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>CsmaCaMacRToFHeader.msg:39</tt> by nedtool.
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:40</tt> by nedtool.
  * <pre>
  * class CsmaCaMacRToFAckHeader extends CsmaCaMacRToFHeader
  * {
@@ -140,7 +144,7 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFAckHeade
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFAckHeader& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>CsmaCaMacRToFHeader.msg:45</tt> by nedtool.
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:46</tt> by nedtool.
  * <pre>
  * class CsmaCaMacRToFDataHeader extends CsmaCaMacRToFHeader
  * {
@@ -184,7 +188,7 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFDataHead
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFDataHeader& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>CsmaCaMacRToFHeader.msg:53</tt> by nedtool.
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:54</tt> by nedtool.
  * <pre>
  * class CsmaCaMacRToFTrailer extends FieldsChunk
  * {

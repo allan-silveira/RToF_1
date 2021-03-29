@@ -243,6 +243,7 @@ void CsmaCaMacRToFHeader::copy(const CsmaCaMacRToFHeader& other)
     this->headerLengthField = other.headerLengthField;
     this->transmitterAddress = other.transmitterAddress;
     this->receiverAddress = other.receiverAddress;
+    this->backoffTime = other.backoffTime;
 }
 
 void CsmaCaMacRToFHeader::parsimPack(omnetpp::cCommBuffer *b) const
@@ -252,6 +253,7 @@ void CsmaCaMacRToFHeader::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->headerLengthField);
     doParsimPacking(b,this->transmitterAddress);
     doParsimPacking(b,this->receiverAddress);
+    doParsimPacking(b,this->backoffTime);
 }
 
 void CsmaCaMacRToFHeader::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -261,6 +263,7 @@ void CsmaCaMacRToFHeader::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->headerLengthField);
     doParsimUnpacking(b,this->transmitterAddress);
     doParsimUnpacking(b,this->receiverAddress);
+    doParsimUnpacking(b,this->backoffTime);
 }
 
 inet::CsmaCaMacRToFHeaderType CsmaCaMacRToFHeader::getType() const
@@ -307,6 +310,17 @@ void CsmaCaMacRToFHeader::setReceiverAddress(const MacAddress& receiverAddress)
     this->receiverAddress = receiverAddress;
 }
 
+omnetpp::simtime_t CsmaCaMacRToFHeader::getBackoffTime() const
+{
+    return this->backoffTime;
+}
+
+void CsmaCaMacRToFHeader::setBackoffTime(omnetpp::simtime_t backoffTime)
+{
+    handleChange();
+    this->backoffTime = backoffTime;
+}
+
 class CsmaCaMacRToFHeaderDescriptor : public omnetpp::cClassDescriptor
 {
   private:
@@ -316,6 +330,7 @@ class CsmaCaMacRToFHeaderDescriptor : public omnetpp::cClassDescriptor
         FIELD_headerLengthField,
         FIELD_transmitterAddress,
         FIELD_receiverAddress,
+        FIELD_backoffTime,
     };
   public:
     CsmaCaMacRToFHeaderDescriptor();
@@ -378,7 +393,7 @@ const char *CsmaCaMacRToFHeaderDescriptor::getProperty(const char *propertyname)
 int CsmaCaMacRToFHeaderDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 4+basedesc->getFieldCount() : 4;
+    return basedesc ? 5+basedesc->getFieldCount() : 5;
 }
 
 unsigned int CsmaCaMacRToFHeaderDescriptor::getFieldTypeFlags(int field) const
@@ -394,8 +409,9 @@ unsigned int CsmaCaMacRToFHeaderDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,    // FIELD_headerLengthField
         0,    // FIELD_transmitterAddress
         0,    // FIELD_receiverAddress
+        0,    // FIELD_backoffTime
     };
-    return (field >= 0 && field < 4) ? fieldTypeFlags[field] : 0;
+    return (field >= 0 && field < 5) ? fieldTypeFlags[field] : 0;
 }
 
 const char *CsmaCaMacRToFHeaderDescriptor::getFieldName(int field) const
@@ -411,8 +427,9 @@ const char *CsmaCaMacRToFHeaderDescriptor::getFieldName(int field) const
         "headerLengthField",
         "transmitterAddress",
         "receiverAddress",
+        "backoffTime",
     };
-    return (field >= 0 && field < 4) ? fieldNames[field] : nullptr;
+    return (field >= 0 && field < 5) ? fieldNames[field] : nullptr;
 }
 
 int CsmaCaMacRToFHeaderDescriptor::findField(const char *fieldName) const
@@ -423,6 +440,7 @@ int CsmaCaMacRToFHeaderDescriptor::findField(const char *fieldName) const
     if (fieldName[0] == 'h' && strcmp(fieldName, "headerLengthField") == 0) return base+1;
     if (fieldName[0] == 't' && strcmp(fieldName, "transmitterAddress") == 0) return base+2;
     if (fieldName[0] == 'r' && strcmp(fieldName, "receiverAddress") == 0) return base+3;
+    if (fieldName[0] == 'b' && strcmp(fieldName, "backoffTime") == 0) return base+4;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -439,8 +457,9 @@ const char *CsmaCaMacRToFHeaderDescriptor::getFieldTypeString(int field) const
         "uint8_t",    // FIELD_headerLengthField
         "inet::MacAddress",    // FIELD_transmitterAddress
         "inet::MacAddress",    // FIELD_receiverAddress
+        "omnetpp::simtime_t",    // FIELD_backoffTime
     };
-    return (field >= 0 && field < 4) ? fieldTypeStrings[field] : nullptr;
+    return (field >= 0 && field < 5) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **CsmaCaMacRToFHeaderDescriptor::getFieldPropertyNames(int field) const
@@ -518,6 +537,7 @@ std::string CsmaCaMacRToFHeaderDescriptor::getFieldValueAsString(void *object, i
         case FIELD_headerLengthField: return ulong2string(pp->getHeaderLengthField());
         case FIELD_transmitterAddress: return pp->getTransmitterAddress().str();
         case FIELD_receiverAddress: return pp->getReceiverAddress().str();
+        case FIELD_backoffTime: return simtime2string(pp->getBackoffTime());
         default: return "";
     }
 }

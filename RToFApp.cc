@@ -312,6 +312,10 @@ void RToFApp::processPacket(Packet *pk)
         std::cout << "T-E-S-T: " << signalTimeTag->getStartTime() <<endl;
         std::cout << "T-E-S-T: " << signalTimeTag->getEndTime() <<endl;
 
+
+        std::cout << "T-E-S-T backoff Time: " <<endl;
+
+
         //payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
         auto tags=payload->addTag<CreationTimeTag>();
         tags->setCreationTime(signalTimeTag->getEndTime());

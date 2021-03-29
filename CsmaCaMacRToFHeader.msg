@@ -33,6 +33,7 @@ class CsmaCaMacRToFHeader extends FieldsChunk
     uint8_t headerLengthField;    // header length in bytes, max value is 255 (1 byte)
     MacAddress transmitterAddress;    // (6 byte)
     MacAddress receiverAddress;    // (6 byte)
+    simtime_t backoffTime;
 }
 
 class CsmaCaMacRToFAckHeader extends CsmaCaMacRToFHeader

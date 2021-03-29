@@ -26,7 +26,7 @@
 
 using namespace inet;
 
-Register_Protocol_Printer(&Protocol::csmaCaMac, CsmaCaMacRToFProtocolPrinter);
+Register_Protocol_Printer(&Protocol::csmaCaMacRToF, CsmaCaMacRToFProtocolPrinter);
 
 void CsmaCaMacRToFProtocolPrinter::print(const Ptr<const Chunk>& chunk, const Protocol *protocol, const cMessagePrinter::Options *options, Context& context) const
 {

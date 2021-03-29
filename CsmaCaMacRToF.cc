@@ -392,6 +392,10 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
     macHeader->setHeaderLengthField(B(headerLength).get());
     auto transportProtocol = frame->getTag<PacketProtocolTag>()->getProtocol();
     auto networkProtocol = ProtocolGroup::ethertype.getProtocolNumber(transportProtocol);
+
+    macHeader->setBackoffTime(backoffPeriod); //passing the time of backoff to dataHeader
+
+
     macHeader->setNetworkProtocol(networkProtocol);
     macHeader->setTransmitterAddress(interfaceEntry->getMacAddress());
     macHeader->setReceiverAddress(frame->getTag<MacAddressReq>()->getDestAddress());
@@ -407,7 +411,7 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
     auto macAddressInd = frame->addTagIfAbsent<MacAddressInd>();
     macAddressInd->setSrcAddress(macHeader->getTransmitterAddress());
     macAddressInd->setDestAddress(macHeader->getReceiverAddress());
-    frame->getTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMac);
+    frame->getTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMacRToF);
 }
 
 void CsmaCaMacRToF::decapsulate(Packet *frame)
@@ -536,7 +540,7 @@ void CsmaCaMacRToF::sendAckFrame()
     auto macAddressInd = frame->addTag<MacAddressInd>();
     macAddressInd->setSrcAddress(macHeader->getTransmitterAddress());
     macAddressInd->setDestAddress(macHeader->getReceiverAddress());
-    frame->addTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMac);
+    frame->addTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMacRToF);
     radio->setRadioMode(IRadio::RADIO_MODE_TRANSMITTER);
     sendDown(frame);
     delete frameToAck;
