@@ -27,6 +27,9 @@
 #include "inet/linklayer/common/UserPriority.h"
 #include "inet/linklayer/common/UserPriorityTag_m.h"
 #include "CsmaCaMacRToF.h"
+#include "Backoff_m.h"
+
+simtime_t teste;
 
 using namespace inet;
 
@@ -47,6 +50,7 @@ CsmaCaMacRToF::~CsmaCaMacRToF()
 /****************************************************************
  * Initialization functions.
  */
+
 void CsmaCaMacRToF::initialize(int stage)
 {
     MacProtocolBase::initialize(stage);
@@ -393,8 +397,9 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
     auto transportProtocol = frame->getTag<PacketProtocolTag>()->getProtocol();
     auto networkProtocol = ProtocolGroup::ethertype.getProtocolNumber(transportProtocol);
 
-    macHeader->setBackoffTime(backoffPeriod); //passing the time of backoff to dataHeader
+    macHeader->setBackoffTime(teste); //passing the time of backoff to dataHeader
 
+    //std::cout << "T-E-S-T BACKOFF macHeader->: " <<  macHeader->getBackoffTime() <<endl;
 
     macHeader->setNetworkProtocol(networkProtocol);
     macHeader->setTransmitterAddress(interfaceEntry->getMacAddress());
@@ -405,6 +410,7 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
     frame->insertAtFront(macHeader);
     auto macTrailer = makeShared<CsmaCaMacRToFTrailer>();
     macTrailer->setFcsMode(fcsMode);
+
     if (fcsMode == FCS_COMPUTED)
         macTrailer->setFcs(computeFcs(frame->peekAllAsBytes()));
     frame->insertAtBack(macTrailer);
@@ -427,6 +433,10 @@ void CsmaCaMacRToF::decapsulate(Packet *frame)
     auto transportProtocol = ProtocolGroup::ethertype.getProtocol(networkProtocol);
     frame->addTagIfAbsent<DispatchProtocolReq>()->setProtocol(transportProtocol);
     frame->addTagIfAbsent<PacketProtocolTag>()->setProtocol(transportProtocol);
+
+    //std::cout << "T-E-S-T BACKOFF macHeader decapsulate->: " <<  teste <<endl;
+    frame->addTagIfAbsent<backoff>()->setBackoffTime(teste); //add the backoffTime in tag Backoff
+    frame->getTag<backoff>()->setInitialBackoffTime(macHeader->getBackoffTime());
 }
 
 /****************************************************************
@@ -487,6 +497,10 @@ void CsmaCaMacRToF::generateBackoffPeriod()
     backoffPeriod = slots * slotTime;
     ASSERT(backoffPeriod >= 0);
     EV << "backoff period set to " << backoffPeriod << endl;
+
+    //alterei aqui
+    //std::cout << "T-E-S-T BACKOFF: " <<  backoffPeriod <<endl;
+    teste = backoffPeriod;
 }
 
 void CsmaCaMacRToF::decreaseBackoffPeriod()

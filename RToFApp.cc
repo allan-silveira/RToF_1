@@ -34,7 +34,10 @@
 #include "inet/common/packet/chunk/ByteCountChunk.h"
 #include "inet/physicallayer/base/packetlevel/TransmissionBase_m.h"
 #include "inet/common/scheduler/RealTimeScheduler.h"
+#include "Backoff_m.h"
 #include <fstream>
+
+simtime_t saveBackoffTime;
 
 using namespace inet;
 
@@ -298,6 +301,7 @@ void RToFApp::processPacket(Packet *pk)
         payload->setChunkLength(B(4));
         payload->setSequenceNumber(numSent);
 
+
         //getting the real position of nodes
         cModule *host = getContainingNode(this);
         IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
@@ -308,13 +312,11 @@ void RToFApp::processPacket(Packet *pk)
         packet->setName(ConvertDoubleToString(x, y));
 
         packet->setTimestamp(signalTimeTag->getStartTime());
+ 
+        std::cout << "T-E-S-T Backoff: " << pk->getTag<backoff>()->getBackoffTime() <<endl;
 
         std::cout << "T-E-S-T: " << signalTimeTag->getStartTime() <<endl;
         std::cout << "T-E-S-T: " << signalTimeTag->getEndTime() <<endl;
-
-
-        std::cout << "T-E-S-T backoff Time: " <<endl;
-
 
         //payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
         auto tags=payload->addTag<CreationTimeTag>();
@@ -345,31 +347,43 @@ void RToFApp::processPacket(Packet *pk)
         std::cout << "-------------" << endl;
         std::cout << "Broadcast time: " << IniTime << endl;
         broadcastTime = IniTime;
-        std::cout << "-T-E-S-T::" << pk->getCreationTime() << endl;
+        //std::cout << "-T-E-S-T::" << pk->getCreationTime() << endl;
 
         cModule *host = getContainingNode(this);
         std::cout << "host : " << host << endl;
 
         auto l3Addresses = pk->getTag<L3AddressInd>();
         L3Address hostName = l3Addresses->getSrcAddress();
-        //V << "host sender = " << hostName << endl;
+        //EV << "host sender = " << hostName << endl;
         std::cout << "host sender = " << hostName << endl;
         //std::cout << "position host sender = " << pk->getFullName() << endl;
 
         //savePoints( pk->getFullName());
 
+
+        auto backoffTime = pk->getTag<backoff>(); //getting backoffTime do CSMA
+        std::cout << "TESTE do CSMA: " << backoffTime->getBackoffTime() << "  INICIAL: " << backoffTime->getInitialBackoffTime() <<endl;
+
+        if(aux == 1){
+            auto overhead = Calibration(broadcastTime, pk->getArrivalTime(), backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());//overhead from environment with two hosts is 0.001182000001
+            std::cout << "overhead: " << overhead << endl;
+        }
+
         auto endTime = signalTimeTag->getEndTime();
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
-        auto dist = distanceCalc(pk->getArrivalTime());
 
-        std::cout << "arrival = " << pk->getArrivalTime() << endl;
+        saveBackoffTime = saveBackoffTime + backoffTime->getBackoffTime();
+
+
+        //std::cout << "Backoff here= " << saveBackoffTime << endl;
+        auto dist = distanceCalc(pk->getArrivalTime(), 0.001002000001, saveBackoffTime, backoffTime->getInitialBackoffTime());
         std::cout << "Distance between hosts= " << dist << endl;
-        std::cout << "-------------" << endl;
 
-        if(aux == 1){
-            Calibration(broadcastTime, pk->getArrivalTime());
-        }
+
+        //std::cout << "arrival = " << pk->getArrivalTime() << endl;
+        //std::cout << "Distance between hosts= " << dist << endl;
+        std::cout << "-------------" << endl;
 
     }
     delete pk;
@@ -400,9 +414,9 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
     socket.destroy();         //TODO  in real operating systems, program crash detected by OS and OS closes sockets of crashed programs.
 }
 
-double RToFApp::distanceCalc(simtime_t finalT)
+double RToFApp::distanceCalc(simtime_t finalT, simtime_t overhead, simtime_t backoff, simtime_t backoffIni)
 {
-    double distance = ((299792458 * ((finalT - broadcastTime).dbl() - 0.001322000001))/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
+    double distance = ((299792458 * (finalT - broadcastTime - overhead - backoff - backoffIni).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
@@ -422,18 +436,29 @@ void RToFApp::savePoints(const char *local){
     char aux[] = ",";
     int j = 0;
     int k = 0;
-    for(int i = 0; i <= strlen(loc); i ++){
-        if(loc[i] == aux[0]){
-            y[k] = loc[i+1];
-            k++;
-        }
-        else{
-            x[j] = loc[i];
-            j++;
-        }
-        k = 0;
-        j = 0;
+    while(loc[j] != aux[0]){
+        std::cout << "----TESTE LOCAL: " << loc[j] << "---AUX: "<< aux[0] << endl;
+        x[j] = loc[j];
+        j++;
     }
+    std::cout << "--TESTE X 1: " << x << endl;
+    j++;
+    for(int i = j; i<= strlen(loc); i++){
+        y[k] = loc[i];
+        k++;
+        std::cout << "--TESTE X 2: " << x << endl;
+    }
+    std::cout << "--TESTE X 2: " << x << endl;
+//        if(loc[i] == aux[0]){
+//            y[k] = loc[i+1];
+//            k++;
+//        }
+//        else{
+//            x[j] = loc[i];
+//            j++;
+//        }
+    k = 0;
+    j = 0;
     std::cout << "----TESTE X: " << x << endl;
     std::cout << "----TESTE Y: " << y << endl;
     xVector.push_back(atof(x));
@@ -447,7 +472,6 @@ void RToFApp::savePoints(const char *local){
 }
 
 
-
 const char* RToFApp::ConvertDoubleToString(double value1, double value2){
     std::stringstream ss ;
     ss << value1 << "," << value2;
@@ -455,9 +479,9 @@ const char* RToFApp::ConvertDoubleToString(double value1, double value2){
     return str;
 }
 
-void RToFApp::Calibration(simtime_t StartT, simtime_t EndT){
-    auto overhead = (EndT - StartT) - ((2*1) / 299792458.0) ; //((2 * 1) / 299792458) here we have the calc of real time, so we subtract this real time from time with overhead and we find the overhead
-    std::cout << "overhead = " << overhead << endl;
+omnetpp::simtime_t RToFApp::Calibration(simtime_t StartT, simtime_t EndT, simtime_t backoffTime, simtime_t backoffIni){
+    auto overhead = (EndT - StartT - backoffIni - backoffTime) - ((2*sqrt(1)) / 299792458.0); //((2 * 1) / 299792458) here we have the calc of real time, so we subtract this real time from time with overhead and we find the overhead
+    return overhead;
 }
 
 void RToFApp::setIniTime(simtime_t time)

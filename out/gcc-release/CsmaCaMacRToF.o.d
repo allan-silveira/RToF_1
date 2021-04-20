@@ -108,7 +108,9 @@ out/gcc-release//CsmaCaMacRToF.o: CsmaCaMacRToF.cc \
  E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/ISignal.h \
  E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/IArrival.h \
  E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/IPhysicalLayerFrame.h \
- E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/ITransmitter.h
+ E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/ITransmitter.h \
+ Backoff_m.h \
+ E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/common/geometry/Geometry_m.h
 
 E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/common/ModuleAccess.h:
 
@@ -329,3 +331,7 @@ E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/
 E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/IPhysicalLayerFrame.h:
 
 E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/physicallayer/contract/packetlevel/ITransmitter.h:
+
+Backoff_m.h:
+
+E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4/src/inet/common/geometry/Geometry_m.h:

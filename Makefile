@@ -38,10 +38,12 @@ OBJS = \
     $O/EthernetCRCRToF.o \
     $O/Listener.o \
     $O/RToFApp.o \
+    $O/Backoff_m.o \
     $O/CsmaCaMacRToFHeader_m.o
 
 # Message files
 MSGFILES = \
+    Backoff.msg \
     CsmaCaMacRToFHeader.msg
 
 # SM files
