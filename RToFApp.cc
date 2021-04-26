@@ -375,14 +375,33 @@ void RToFApp::processPacket(Packet *pk)
 
         saveBackoffTime = saveBackoffTime + backoffTime->getBackoffTime();
 
-
-        //std::cout << "Backoff here= " << saveBackoffTime << endl;
-        auto dist = distanceCalc(pk->getArrivalTime(), 0.001002000001, saveBackoffTime, backoffTime->getInitialBackoffTime());
-        std::cout << "Distance between hosts= " << dist << endl;
+        auto backoffTest = backoffTime->getBackoffTime() * 2 + 0.00012;
+        //std::cout << "Backoff here= " << saveBackoffTime << endl; Tests
+//        if(hostName.str() == "10.0.0.2"){
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, 0.00012, backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
+//        }else if(hostName.str() == "10.0.0.4"){
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest, backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
+//        }else{
+//            auto back = backoffTime->getBackoffTime() * 2 + 0.00012 + 0.00116 + 0.00092;
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, back, backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
+//        }
+        //tests environment with 3 hosts
+        //if(hostName.str() == "10.0.0.3"){
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
+            std::cout << "Distance between hosts= " << dist << endl;
+//        }else{
+//            auto backoffTest2host = 0.00036 + 0.00028 + 0.000543;
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest2host, backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
+//        }
 
 
         //std::cout << "arrival = " << pk->getArrivalTime() << endl;
-        //std::cout << "Distance between hosts= " << dist << endl;
+
+//        std::cout << "Distance between hosts= " << dist << endl;
         std::cout << "-------------" << endl;
 
     }
@@ -416,7 +435,7 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
 
 double RToFApp::distanceCalc(simtime_t finalT, simtime_t overhead, simtime_t backoff, simtime_t backoffIni)
 {
-    double distance = ((299792458 * (finalT - broadcastTime - overhead - backoff - backoffIni).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
+    double distance = ((299792458 * (finalT - broadcastTime - overhead - backoff ).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
@@ -480,7 +499,7 @@ const char* RToFApp::ConvertDoubleToString(double value1, double value2){
 }
 
 omnetpp::simtime_t RToFApp::Calibration(simtime_t StartT, simtime_t EndT, simtime_t backoffTime, simtime_t backoffIni){
-    auto overhead = (EndT - StartT - backoffIni - backoffTime) - ((2*sqrt(1)) / 299792458.0); //((2 * 1) / 299792458) here we have the calc of real time, so we subtract this real time from time with overhead and we find the overhead
+    auto overhead = (EndT - StartT - backoffTime) - ((2*sqrt(1)) / 299792458.0); //((2 * 1) / 299792458) here we have the calc of real time, so we subtract this real time from time with overhead and we find the overhead
     return overhead;
 }
 

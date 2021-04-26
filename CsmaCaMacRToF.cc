@@ -399,7 +399,7 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
 
     macHeader->setBackoffTime(teste); //passing the time of backoff to dataHeader
 
-    //std::cout << "T-E-S-T BACKOFF macHeader->: " <<  macHeader->getBackoffTime() <<endl;
+    std::cout << "T-E-S-T BACKOFF macHeader->: " <<  teste <<endl;
 
     macHeader->setNetworkProtocol(networkProtocol);
     macHeader->setTransmitterAddress(interfaceEntry->getMacAddress());
@@ -437,6 +437,7 @@ void CsmaCaMacRToF::decapsulate(Packet *frame)
     //std::cout << "T-E-S-T BACKOFF macHeader decapsulate->: " <<  teste <<endl;
     frame->addTagIfAbsent<backoff>()->setBackoffTime(teste); //add the backoffTime in tag Backoff
     frame->getTag<backoff>()->setInitialBackoffTime(macHeader->getBackoffTime());
+    std::cout << "T-E-S-T BACKOFF decapsulate: " <<  teste <<endl;
 }
 
 /****************************************************************
@@ -499,8 +500,8 @@ void CsmaCaMacRToF::generateBackoffPeriod()
     EV << "backoff period set to " << backoffPeriod << endl;
 
     //alterei aqui
-    //std::cout << "T-E-S-T BACKOFF: " <<  backoffPeriod <<endl;
-    teste = backoffPeriod;
+    std::cout << "T-E-S-T BACKOFF generate: " <<  backoffPeriod <<endl;
+
 }
 
 void CsmaCaMacRToF::decreaseBackoffPeriod()
@@ -516,6 +517,8 @@ void CsmaCaMacRToF::scheduleBackoffTimer()
     EV << "scheduling backoff timer\n";
     if (isInvalidBackoffPeriod())
         generateBackoffPeriod();
+    std::cout << "T-E-S-T BACKOFF in the schedule: " <<  backoffPeriod <<endl;
+    teste = backoffPeriod;
     scheduleAt(simTime() + backoffPeriod, endBackoff);
 }
 
