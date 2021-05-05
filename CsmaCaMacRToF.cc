@@ -29,7 +29,7 @@
 #include "CsmaCaMacRToF.h"
 #include "Backoff_m.h"
 
-simtime_t teste;
+
 
 using namespace inet;
 
@@ -93,6 +93,7 @@ void CsmaCaMacRToF::initialize(int stage)
         fsm.setName("CsmaCaMacRToF State Machine");
         backoffPeriod = -1;
         retryCounter = 0;
+        teste = 0;
 
         // statistics
         numRetry = 0;
@@ -116,6 +117,8 @@ void CsmaCaMacRToF::initialize(int stage)
         WATCH(numReceived);
         WATCH(numSentBroadcast);
         WATCH(numReceivedBroadcast);
+
+        WATCH(teste);
     }
     else if (stage == INITSTAGE_LINK_LAYER) {
         // subscribe for the information of the carrier sense
@@ -499,7 +502,8 @@ void CsmaCaMacRToF::generateBackoffPeriod()
     ASSERT(backoffPeriod >= 0);
     EV << "backoff period set to " << backoffPeriod << endl;
 
-    //alterei aqui
+    //alterei aquistd::cout << "T-E-S-T BACKOFF generate: " <<  backoffPeriod <<endl;
+    std::cout << "T-E-S-T BACKOFF host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
     std::cout << "T-E-S-T BACKOFF generate: " <<  backoffPeriod <<endl;
 
 }

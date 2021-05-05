@@ -82,7 +82,7 @@ class INET_API CsmaCaMacRToF : public MacProtocolBase
 
     /** Remaining backoff period in seconds */
     simtime_t backoffPeriod = -1;
-
+    simtime_t teste = 0;
     /** Number of frame retransmission attempts. */
     int retryCounter = -1;
     //@}

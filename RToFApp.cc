@@ -37,8 +37,6 @@
 #include "Backoff_m.h"
 #include <fstream>
 
-simtime_t saveBackoffTime;
-
 using namespace inet;
 
 Define_Module(RToFApp);
@@ -312,11 +310,13 @@ void RToFApp::processPacket(Packet *pk)
         packet->setName(ConvertDoubleToString(x, y));
 
         packet->setTimestamp(signalTimeTag->getStartTime());
- 
+        std::cout << "-------------------------" <<  endl;
+        std::cout << "host : " << host << endl;
+
         std::cout << "T-E-S-T Backoff: " << pk->getTag<backoff>()->getBackoffTime() <<endl;
 
-        std::cout << "T-E-S-T: " << signalTimeTag->getStartTime() <<endl;
-        std::cout << "T-E-S-T: " << signalTimeTag->getEndTime() <<endl;
+//        std::cout << "T-E-S-T start T : " << signalTimeTag->getStartTime() <<endl;
+//        std::cout << "T-E-S-T end T: " << signalTimeTag->getEndTime() <<endl;
 
         //payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
         auto tags=payload->addTag<CreationTimeTag>();
@@ -340,6 +340,7 @@ void RToFApp::processPacket(Packet *pk)
         numSent++;
 
         std::cout << "real position->> X = " << x << " e Y = "<<y<<endl;
+        std::cout << "-------------------------" <<  endl;
     }else{
         //saveTime(pk->getTimestamp());
         auto signalTimeTag = pk->getTag<SignalTimeInd>();
@@ -373,37 +374,41 @@ void RToFApp::processPacket(Packet *pk)
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
 
-        saveBackoffTime = saveBackoffTime + backoffTime->getBackoffTime();
-
         auto backoffTest = backoffTime->getBackoffTime() * 2 + 0.00012;
-        //std::cout << "Backoff here= " << saveBackoffTime << endl; Tests
-//        if(hostName.str() == "10.0.0.2"){
-//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, 0.00012, backoffTime->getInitialBackoffTime());
-//            std::cout << "Distance between hosts= " << dist << endl;
-//        }else if(hostName.str() == "10.0.0.4"){
+
+        if(hostName.str() == "10.0.0.3"){
+            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, 0.00012, backoffTime->getInitialBackoffTime());
+            std::cout << "Distance between hosts= " << dist << endl;
+        }//else if(hostName.str() == "10.0.0.4"){
 //            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest, backoffTime->getInitialBackoffTime());
 //            std::cout << "Distance between hosts= " << dist << endl;
 //        }else{
 //            auto back = backoffTime->getBackoffTime() * 2 + 0.00012 + 0.00116 + 0.00092;
 //            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, back, backoffTime->getInitialBackoffTime());
 //            std::cout << "Distance between hosts= " << dist << endl;
-//        }
-        //tests environment with 3 hosts
-        //if(hostName.str() == "10.0.0.3"){
-            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
+        else if(hostName.str() == "10.0.0.2"){
+            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174, 0.00026, backoffTime->getInitialBackoffTime());
             std::cout << "Distance between hosts= " << dist << endl;
+        }else{
+            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174 + 0.000824149174, 0.00056, backoffTime->getInitialBackoffTime());
+            std::cout << "Distance between hosts= " << dist << endl;
+        }
+        //tests environment with 3 hosts
+//        if(hostName.str() == "10.0.0.3"){
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
 //        }else{
 //            auto backoffTest2host = 0.00036 + 0.00028 + 0.000543;
-//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest2host, backoffTime->getInitialBackoffTime());
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.00005 + 0.000546 + 0.000218 + 0.000080066713 + 0.000010066713, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
 //            std::cout << "Distance between hosts= " << dist << endl;
 //        }
 
-
-        //std::cout << "arrival = " << pk->getArrivalTime() << endl;
-
+//        std::cout << "arrival = " << pk->getArrivalTime() << endl;
 //        std::cout << "Distance between hosts= " << dist << endl;
         std::cout << "-------------" << endl;
-
     }
     delete pk;
     numReceived++;
