@@ -1,14 +1,14 @@
 version 2
-run Wireless-0-20210504-15:35:18-88512
+run Wireless-0-20210519-12:00:43-28240
 attr configname Wireless
-attr datetime 20210504-15:35:18
+attr datetime 20210519-12:00:43
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 88512
+attr processid 28240
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -79,22 +79,6 @@ vector 7 Wireless.host4.wlan[0].radio receptionState:vector ETV
 attr interpolationmode sample-hold
 attr source receptionStateChanged
 attr title "Radio reception state, vector"
-0	0	0	0
-0	0	0	0
-0	0	0	2
-1	0	0	0
-1	0	0	0
-1	0	0	2
-2	0	0	0
-2	0	0	0
-2	0	0	2
-3	0	0	0
-3	0	0	0
-3	0	0	2
-4	0	0	1
-5	0	0	1
-6	0	0	1
-7	0	0	1
 vector 8 Wireless.host1.udp packetSent:vector(packetBytes) ETV
 attr interpolationmode none
 attr source packetSent
@@ -243,6 +227,9 @@ vector 45 Wireless.host4.wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr source transmissionStateChanged
 attr title "Radio transmission state, vector"
+0	0	0	0
+0	0	0	0
+0	0	0	2
 0	16	0.00019	3
 0	21	0.000736	2
 0	64	0.001462149174	3
@@ -251,12 +238,22 @@ attr title "Radio transmission state, vector"
 0	98	0.00264424352	2
 0	121	0.003550376946	3
 0	126	0.003768376946	2
+1	0	0	0
+1	0	0	0
+1	0	0	2
 1	78	0.001870196347	3
 1	83	0.002416196347	2
+2	0	0	0
+2	0	0	0
+2	0	0	2
 2	49	0.000906074587	3
 2	54	0.001452074587	2
+3	0	0	0
+3	0	0	0
+3	0	0	2
 3	106	0.002994310233	3
 3	111	0.003540310233	2
+4	0	0	1
 4	16	0.00019	0
 4	21	0.000736	1
 4	52	0.000906149174	3
@@ -271,6 +268,7 @@ attr title "Radio transmission state, vector"
 4	114	0.003540376946	1
 4	121	0.003550376946	0
 4	126	0.003768376946	1
+5	0	0	1
 5	18	0.000190047173	3
 5	22	0.000736047173	1
 5	51	0.000906107943	3
@@ -285,6 +283,7 @@ attr title "Radio transmission state, vector"
 5	112	0.003540357406	1
 5	123	0.003550424119	3
 5	127	0.003768424119	1
+6	0	0	1
 6	20	0.000190074587	3
 6	38	0.000736074587	1
 6	49	0.000906074587	0
@@ -299,6 +298,7 @@ attr title "Radio transmission state, vector"
 6	119	0.00354038482	1
 6	125	0.003550451533	3
 6	131	0.003768451533	1
+7	0	0	1
 7	19	0.000190066713	3
 7	30	0.000736066713	1
 7	53	0.000906149174	3

@@ -37,6 +37,9 @@ using namespace inet::physicallayer;
 
 Define_Module(CsmaCaMacRToF);
 
+simtime_t teste1;
+simtime_t teste2;
+
 CsmaCaMacRToF::~CsmaCaMacRToF()
 {
     cancelAndDelete(endSifs);
@@ -93,7 +96,6 @@ void CsmaCaMacRToF::initialize(int stage)
         fsm.setName("CsmaCaMacRToF State Machine");
         backoffPeriod = -1;
         retryCounter = 0;
-        teste = 0;
 
         // statistics
         numRetry = 0;
@@ -252,6 +254,16 @@ void CsmaCaMacRToF::handleWithFsm(cMessage *msg)
         FSMA_State(BACKOFF)
         {
             FSMA_Enter(scheduleBackoffTimer());
+
+            //Try to pass back
+//            auto macHeader = makeShared<CsmaCaMacRToFDataHeader>();
+//            macHeader->setBackoffTime(teste);
+//
+//            std::cout << "name FSMA ->: " <<  getCurrentTransmission()->getName() <<endl;
+//            getCurrentTransmission()->addTagIfAbsent<backoff>()->setBackoffTime(teste);
+//            std::cout << "backoff FSMA ->: " <<  getCurrentTransmission()->getTag<backoff>()->getBackoffTime()<<endl;
+
+
             FSMA_Event_Transition(Start-Transmit,
                                   msg == endBackoff,
                                   TRANSMIT,
@@ -402,7 +414,8 @@ void CsmaCaMacRToF::encapsulate(Packet *frame)
 
     macHeader->setBackoffTime(teste); //passing the time of backoff to dataHeader
 
-    std::cout << "T-E-S-T BACKOFF macHeader->: " <<  teste <<endl;
+//    std::cout << "T-E-S-T BACKOFF capsulate host: " <<  interfaceEntry->getMacAddress() <<endl;
+//    std::cout << "T-E-S-T BACKOFF capsulate->: " <<  teste1 <<endl;
 
     macHeader->setNetworkProtocol(networkProtocol);
     macHeader->setTransmitterAddress(interfaceEntry->getMacAddress());
@@ -438,9 +451,13 @@ void CsmaCaMacRToF::decapsulate(Packet *frame)
     frame->addTagIfAbsent<PacketProtocolTag>()->setProtocol(transportProtocol);
 
     //std::cout << "T-E-S-T BACKOFF macHeader decapsulate->: " <<  teste <<endl;
-    frame->addTagIfAbsent<backoff>()->setBackoffTime(teste); //add the backoffTime in tag Backoff
-    frame->getTag<backoff>()->setInitialBackoffTime(macHeader->getBackoffTime());
-    std::cout << "T-E-S-T BACKOFF decapsulate: " <<  teste <<endl;
+    frame->addTagIfAbsent<backoff>()->setBackoffTime(teste1); //add the backoffTime in tag Backoff
+    teste += teste1 + teste2;
+    frame->getTag<backoff>()->setInitialBackoffTime(teste);
+
+//    std::cout << "T-E-S-T BACKOFF decapsulate host : " <<   frame->getTag<backoff>()->getBackoffTime() <<endl;
+    std::cout << "T-E-S-T BACKOFF decapsulate host: " <<  macHeader->getTransmitterAddress() <<endl;
+    std::cout << "T-E-S-T BACKOFF decapsulate: " <<  teste1 <<endl;
 }
 
 /****************************************************************
@@ -503,8 +520,8 @@ void CsmaCaMacRToF::generateBackoffPeriod()
     EV << "backoff period set to " << backoffPeriod << endl;
 
     //alterei aquistd::cout << "T-E-S-T BACKOFF generate: " <<  backoffPeriod <<endl;
-    std::cout << "T-E-S-T BACKOFF host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
-    std::cout << "T-E-S-T BACKOFF generate: " <<  backoffPeriod <<endl;
+//    std::cout << "T-E-S-T BACKOFF generate host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
+//    std::cout << "T-E-S-T BACKOFF generate: " <<  backoffPeriod <<endl;
 
 }
 
@@ -521,8 +538,23 @@ void CsmaCaMacRToF::scheduleBackoffTimer()
     EV << "scheduling backoff timer\n";
     if (isInvalidBackoffPeriod())
         generateBackoffPeriod();
-    std::cout << "T-E-S-T BACKOFF in the schedule: " <<  backoffPeriod <<endl;
-    teste = backoffPeriod;
+
+    teste1 = backoffPeriod;
+
+    std::cout << " " <<  endl;
+    std::cout << " " <<  endl;
+    std::cout << "T-E-S-T BACKOFF schedule host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
+    std::cout << "T-E-S-T teste2 in the schedule teste2: " <<  teste2 <<endl;
+
+
+//    auto macHeader = makeShared<CsmaCaMacRToFDataHeader>();
+//    macHeader->setBackoffTime(teste);
+
+    //Test print
+//    std::cout << "T-E-S-T BACKOFF schedule host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
+//    std::cout << "T-E-S-T BACKOFF in the schedule: " <<  backoffPeriod <<endl;
+//    std::cout << "T-E-S-T BACKOFF in the schedule teste: " <<  macHeader->getBackoffTime() <<endl;
+    std::cout << " " <<  endl;
     scheduleAt(simTime() + backoffPeriod, endBackoff);
 }
 
@@ -530,6 +562,22 @@ void CsmaCaMacRToF::cancelBackoffTimer()
 {
     EV << "canceling backoff timer\n";
     cancelEvent(endBackoff);
+
+
+    simtime_t elapsedBackoffTime = simTime() - endBackoff->getSendingTime();
+    std::cout << " " <<  endl;
+
+    std::cout << "T-E-S-T cancel host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
+
+    if(getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress().str() == "0A-AA-00-00-00-02" or getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress().str() == "0A-AA-00-00-00-03")
+        teste2 += elapsedBackoffTime;
+
+    std::cout << "T-E-S-T elepsed in the cancel elepsed: " <<  elapsedBackoffTime <<endl;
+
+    std::cout << "T-E-S-T teste2 in the cancel teste2: " <<  teste2 <<endl;
+
+    std::cout << " " <<  endl;
+    std::cout << " " <<  endl;
 }
 
 /****************************************************************

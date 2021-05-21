@@ -46,6 +46,8 @@ RToFApp::~RToFApp()
     cancelAndDelete(selfMsg);
 }
 
+simtime_t backoffTest;
+
 void RToFApp::initialize(int stage)
 {
     ApplicationBase::initialize(stage);
@@ -313,7 +315,7 @@ void RToFApp::processPacket(Packet *pk)
         std::cout << "-------------------------" <<  endl;
         std::cout << "host : " << host << endl;
 
-        std::cout << "T-E-S-T Backoff: " << pk->getTag<backoff>()->getBackoffTime() <<endl;
+        //alterado agora std::cout << "T-E-S-T Backoff: " << pk->getTag<backoff>()->getBackoffTime() <<endl;
 
 //        std::cout << "T-E-S-T start T : " << signalTimeTag->getStartTime() <<endl;
 //        std::cout << "T-E-S-T end T: " << signalTimeTag->getEndTime() <<endl;
@@ -363,10 +365,10 @@ void RToFApp::processPacket(Packet *pk)
 
 
         auto backoffTime = pk->getTag<backoff>(); //getting backoffTime do CSMA
-        std::cout << "TESTE do CSMA: " << backoffTime->getBackoffTime() << "  INICIAL: " << backoffTime->getInitialBackoffTime() <<endl;
+
 
         if(aux == 1){
-            auto overhead = Calibration(broadcastTime, pk->getArrivalTime(), backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());//overhead from environment with two hosts is 0.001182000001
+            auto overhead = Calibration(broadcastTime, pk->getArrivalTime(), backoffTime->getBackoffTime() );//overhead from environment with two hosts is 0.001182000001
             std::cout << "overhead: " << overhead << endl;
         }
 
@@ -374,33 +376,32 @@ void RToFApp::processPacket(Packet *pk)
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
 
-        auto backoffTest = backoffTime->getBackoffTime() * 2 + 0.00012;
 
-        if(hostName.str() == "10.0.0.3"){
-            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, 0.00012, backoffTime->getInitialBackoffTime());
-            std::cout << "Distance between hosts= " << dist << endl;
-        }//else if(hostName.str() == "10.0.0.4"){
-//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest, backoffTime->getInitialBackoffTime());
-//            std::cout << "Distance between hosts= " << dist << endl;
-//        }else{
-//            auto back = backoffTime->getBackoffTime() * 2 + 0.00012 + 0.00116 + 0.00092;
-//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, back, backoffTime->getInitialBackoffTime());
-//            std::cout << "Distance between hosts= " << dist << endl;
-        else if(hostName.str() == "10.0.0.2"){
-            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174, 0.00026, backoffTime->getInitialBackoffTime());
-            std::cout << "Distance between hosts= " << dist << endl;
-        }else{
-            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174 + 0.000824149174, 0.00056, backoffTime->getInitialBackoffTime());
-            std::cout << "Distance between hosts= " << dist << endl;
-        }
-        //tests environment with 3 hosts
-//        if(hostName.str() == "10.0.0.3"){
-//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
-//            std::cout << "Distance between hosts= " << dist << endl;
-//        }else{
+        backoffTest += backoffTime->getBackoffTime();
+
+        std::cout << "TESTE do CSMA: " << backoffTime->getBackoffTime() << " TESTE do cancel Time: " << backoffTime->getInitialBackoffTime() << endl;
+
+        auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142,  backoffTime->getBackoffTime());
+        std::cout << "Distance between hosts getting auto backoff= " << dist << endl;
+
+        auto dist2 = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, backoffTime->getInitialBackoffTime());
+        std::cout << "Distance between with getting difference time on cancelbackoff hosts= " << dist2 << endl;
+
+
+//        if(hostName.str() == "10.0.0.2"){
+////            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+//            auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, 0.001084149174);
+//            std::cout << "Distance between hosts TEST EXTREME= " << dist << endl;
+//        }//else{
+////            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+////            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824 + 0.000824, 0.00056, backoffTime->getInitialBackoffTime());
+////            std::cout << "Distance between hosts= " << dist << endl;
+////        }
+//        //tests environment with 3 hosts
+//        else if(hostName.str() == "10.0.0.4"){
+//            auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, 0.00220824352);
+//            std::cout << "Distance between TEST EXTREME= " << dist << endl;
+//        }//else{
 //            auto backoffTest2host = 0.00036 + 0.00028 + 0.000543;
 //            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.00005 + 0.000546 + 0.000218 + 0.000080066713 + 0.000010066713, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
 //            std::cout << "Distance between hosts= " << dist << endl;
@@ -438,9 +439,9 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
     socket.destroy();         //TODO  in real operating systems, program crash detected by OS and OS closes sockets of crashed programs.
 }
 
-double RToFApp::distanceCalc(simtime_t finalT, simtime_t overhead, simtime_t backoff, simtime_t backoffIni)
+double RToFApp::distanceCalc(simtime_t finalT, simtime_t iniT, simtime_t overhead, simtime_t backoff)
 {
-    double distance = ((299792458 * (finalT - broadcastTime - overhead - backoff ).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
+    double distance = ((299792458 * (finalT - iniT - overhead - backoff ).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
@@ -503,7 +504,7 @@ const char* RToFApp::ConvertDoubleToString(double value1, double value2){
     return str;
 }
 
-omnetpp::simtime_t RToFApp::Calibration(simtime_t StartT, simtime_t EndT, simtime_t backoffTime, simtime_t backoffIni){
+omnetpp::simtime_t RToFApp::Calibration(simtime_t StartT, simtime_t EndT, simtime_t backoffTime){
     auto overhead = (EndT - StartT - backoffTime) - ((2*sqrt(1)) / 299792458.0); //((2 * 1) / 299792458) here we have the calc of real time, so we subtract this real time from time with overhead and we find the overhead
     return overhead;
 }

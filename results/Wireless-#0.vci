@@ -1,15 +1,15 @@
-file 13752 1620153351                                           
+file 13752 1621451724                                           
 version 2
-run Wireless-0-20210504-15:35:18-88512
+run Wireless-0-20210519-12:00:43-28240
 attr configname Wireless
-attr datetime 20210504-15:35:18
+attr datetime 20210519-12:00:43
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 88512
+attr processid 28240
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -80,14 +80,6 @@ vector 7 Wireless.host4.wlan[0].radio receptionState:vector ETV
 attr interpolationmode sample-hold
 attr source receptionStateChanged
 attr title "Radio reception state, vector"
-0	3217 27 0 0 0 0 3 0 2 2 4
-1	3244 27 0 0 0 0 3 0 2 2 4
-2	3271 27 0 0 0 0 3 0 2 2 4
-3	3298 27 0 0 0 0 3 0 2 2 4
-4	3325 9 0 0 0 0 1 1 1 1 1
-5	3334 9 0 0 0 0 1 1 1 1 1
-6	3343 9 0 0 0 0 1 1 1 1 1
-7	3352 9 0 0 0 0 1 1 1 1 1
 vector 8 Wireless.host1.udp packetSent:vector(packetBytes) ETV
 attr interpolationmode none
 attr source packetSent
@@ -236,14 +228,14 @@ vector 45 Wireless.host4.wlan[0].radio transmissionState:vector ETV
 attr interpolationmode sample-hold
 attr source transmissionStateChanged
 attr title "Radio transmission state, vector"
-0	10506 171 16 126 0.00019 0.003768376946 8 2 3 20 52
-1	10677 46 78 83 0.001870196347 0.002416196347 2 2 3 5 13
-2	10723 46 49 54 0.000906074587 0.001452074587 2 2 3 5 13
-3	10769 48 106 111 0.002994310233 0.003540310233 2 2 3 5 13
-4	10817 309 16 126 0.00019 0.003768376946 14 0 3 16 34
-5	11126 326 18 127 0.000190047173 0.003768424119 14 0 3 25 61
-6	11452 325 20 131 0.000190074587 0.003768451533 14 0 3 25 61
-7	11777 325 19 129 0.000190066713 0.003768443659 14 0 3 25 61
+0	10362 198 0 126 0 0.003768376946 11 0 3 22 56
+1	10560 73 0 83 0 0.002416196347 5 0 3 7 17
+2	10633 73 0 54 0 0.001452074587 5 0 3 7 17
+3	10706 75 0 111 0 0.003540310233 5 0 3 7 17
+4	10781 318 0 126 0 0.003768376946 15 0 3 17 35
+5	11099 335 0 127 0 0.003768424119 15 0 3 26 62
+6	11434 334 0 131 0 0.003768451533 15 0 3 26 62
+7	11768 334 0 129 0 0.003768443659 15 0 3 26 62
 8	12102 10 3 3 0 0 1 12 12 12 144
 9	12112 11 11 11 0 0 1 32 32 32 1024
 10	12123 12 11 11 0 0 1 32 32 32 1024
