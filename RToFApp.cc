@@ -374,30 +374,28 @@ void RToFApp::processPacket(Packet *pk)
         EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
 
-        auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, backoffTime->getBackoffTime());
+        auto backoffTest = backoffTime->getBackoffTime() * 2 + 0.00012;
 
-//         auto backoffTest = backoffTime->getBackoffTime() * 2 + 0.00012;
-//
         if(hostName.str() == "10.0.0.3"){
-//            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-            auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, 0.00012);
-//            std::cout << "Distance between hosts= " << dist << endl;
+            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, 0.00012, backoffTime->getInitialBackoffTime());
+            std::cout << "Distance between hosts= " << dist << endl;
         }//else if(hostName.str() == "10.0.0.4"){
-// //            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest, backoffTime->getInitialBackoffTime());
-// //            std::cout << "Distance between hosts= " << dist << endl;
-// //        }else{
-// //            auto back = backoffTime->getBackoffTime() * 2 + 0.00012 + 0.00116 + 0.00092;
-// //            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, back, backoffTime->getInitialBackoffTime());
-// //            std::cout << "Distance between hosts= " << dist << endl;
-//         else if(hostName.str() == "10.0.0.2"){
-//             std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-//             auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174, 0.00026, backoffTime->getInitialBackoffTime());
-//             std::cout << "Distance between hosts= " << dist << endl;
-//         }else{
-//             std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-//             auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174 + 0.000824149174, 0.00056, backoffTime->getInitialBackoffTime());
-//             std::cout << "Distance between hosts= " << dist << endl;
-//         }
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTest, backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
+//        }else{
+//            auto back = backoffTime->getBackoffTime() * 2 + 0.00012 + 0.00116 + 0.00092;
+//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, back, backoffTime->getInitialBackoffTime());
+//            std::cout << "Distance between hosts= " << dist << endl;
+        else if(hostName.str() == "10.0.0.2"){
+            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174, 0.00026, backoffTime->getInitialBackoffTime());
+            std::cout << "Distance between hosts= " << dist << endl;
+        }else{
+            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
+            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824149174 + 0.000824149174, 0.00056, backoffTime->getInitialBackoffTime());
+            std::cout << "Distance between hosts= " << dist << endl;
+        }
         //tests environment with 3 hosts
 //        if(hostName.str() == "10.0.0.3"){
 //            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
@@ -440,18 +438,9 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
     socket.destroy();         //TODO  in real operating systems, program crash detected by OS and OS closes sockets of crashed programs.
 }
 
-double RToFApp::distanceCalc(simtime_t finalT, simtime_t iniT, simtime_t overhead, simtime_t backoff)
+double RToFApp::distanceCalc(simtime_t finalT, simtime_t overhead, simtime_t backoff, simtime_t backoffIni)
 {
-    std::cout << endl << "finalT = " << finalT << endl;
-    std::cout << "overhead = " << overhead << endl;
-    std::cout << "backoff = " << backoff << endl;
-    std::cout << "iniT = " << iniT << endl;
-
-    double distance = ((299792458 * (finalT - iniT - overhead - backoff ).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
-
-    std::cout << "distance = " << distance << endl << endl;
-
-
+    double distance = ((299792458 * (finalT - broadcastTime - overhead - backoff ).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
     return distance;
 }
 
@@ -524,3 +513,8 @@ void RToFApp::setIniTime(simtime_t time)
     IniTime = time;
 }
 // namespace inet
+
+
+
+
+
