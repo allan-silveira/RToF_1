@@ -35,6 +35,7 @@
 #include "inet/physicallayer/base/packetlevel/TransmissionBase_m.h"
 #include "inet/common/scheduler/RealTimeScheduler.h"
 #include "Backoff_m.h"
+#include "Location_m.h"
 #include <fstream>
 
 using namespace inet;
@@ -306,8 +307,14 @@ void RToFApp::processPacket(Packet *pk)
         cModule *host = getContainingNode(this);
         IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
         auto real_position = mobility->getCurrentPosition();
+
         double x = mobility->getCurrentPosition().x;
+
         double y = mobility->getCurrentPosition().y;
+
+        auto loc = packet->addTagIfAbsent<location>();
+        loc->setXPosition(x);
+        loc->setYPosition(y);
 
         packet->setName(ConvertDoubleToString(x, y));
 
@@ -361,7 +368,9 @@ void RToFApp::processPacket(Packet *pk)
         std::cout << "host sender = " << hostName << endl;
         //std::cout << "position host sender = " << pk->getFullName() << endl;
 
-        //savePoints( pk->getFullName());
+        auto xyLocation = pk->getTag<location>();
+        savePoints(pk->getFullName());
+        std::cout << "Get tag Xposition: " << xyLocation->getXPosition() << "   Get tag Yposition: " <<  xyLocation->getYPosition() << endl;
 
 
         auto backoffTime = pk->getTag<backoff>(); //getting backoffTime do CSMA
@@ -456,19 +465,25 @@ double RToFApp::distanceCalc(simtime_t finalT, simtime_t iniT, simtime_t overhea
 void RToFApp::savePoints(const char *local){
     char loc[strlen(local) + 1];
     strcpy(loc, local);
-    char x[2];
-    char y[2];
+    char x[0];
+    char y[0];
     char aux[] = ",";
     int j = 0;
     int k = 0;
-    while(loc[j] != aux[0]){
+    int auxV = 0;
+    std::cout << "----TESTE local: " << local << endl;
+    while(loc[j] != aux[0] && j <= auxV){
         std::cout << "----TESTE LOCAL: " << loc[j] << "---AUX: "<< aux[0] << endl;
         x[j] = loc[j];
         j++;
+        auxV++;
+        std::cout << "--TESTE X while: " << x << "--TESTE J while: " << j << endl;
     }
+    auxV = auxV + 2;
+    std::cout << "--TESTE j: " << j << endl;
     std::cout << "--TESTE X 1: " << x << endl;
-    j++;
-    for(int i = j; i<= strlen(loc); i++){
+    std::cout << "--TESTE j: " << j << endl;
+    for(int i = j+1; i<= strlen(loc); i++){
         y[k] = loc[i];
         k++;
         std::cout << "--TESTE X 2: " << x << endl;
@@ -482,8 +497,6 @@ void RToFApp::savePoints(const char *local){
 //            x[j] = loc[i];
 //            j++;
 //        }
-    k = 0;
-    j = 0;
     std::cout << "----TESTE X: " << x << endl;
     std::cout << "----TESTE Y: " << y << endl;
     xVector.push_back(atof(x));

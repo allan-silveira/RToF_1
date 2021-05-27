@@ -28,7 +28,7 @@
 #include "inet/linklayer/common/UserPriorityTag_m.h"
 #include "CsmaCaMacRToF.h"
 #include "Backoff_m.h"
-
+#include "Location_m.h"
 
 
 using namespace inet;
@@ -452,6 +452,7 @@ void CsmaCaMacRToF::decapsulate(Packet *frame)
 
     //std::cout << "T-E-S-T BACKOFF macHeader decapsulate->: " <<  teste <<endl;
     frame->addTagIfAbsent<backoff>()->setBackoffTime(teste1); //add the backoffTime in tag Backoff
+
     teste += teste1 + teste2;
     frame->getTag<backoff>()->setInitialBackoffTime(teste);
 
@@ -569,7 +570,7 @@ void CsmaCaMacRToF::cancelBackoffTimer()
 
     std::cout << "T-E-S-T cancel host: " << getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress() <<endl;
 
-    if(getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress().str() == "0A-AA-00-00-00-02" or getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress().str() == "0A-AA-00-00-00-03")
+    if(getCurrentTransmission()->peekAtFront<CsmaCaMacRToFHeader>()->getTransmitterAddress().str() != "0A-AA-00-00-00-01")
         teste2 += elapsedBackoffTime;
 
     std::cout << "T-E-S-T elepsed in the cancel elepsed: " <<  elapsedBackoffTime <<endl;

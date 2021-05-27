@@ -1,15 +1,15 @@
-file 13752 1621451724                                           
+                                                                
 version 2
-run Wireless-0-20210519-12:00:43-28240
+run Wireless-0-20210527-11:11:29-11720
 attr configname Wireless
-attr datetime 20210519-12:00:43
+attr datetime 20210527-11:11:29
 attr experiment Wireless
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network Wireless
-attr processid 28240
+attr processid 11720
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -188,90 +188,4 @@ attr title "packets sent, vector(packetBytes)"
 vector 35 Wireless.host3.wlan[0].mac.queue packetPushed:vector(packetBytes) ETV
 attr interpolationmode none
 attr title "packet pushed, vector(packetBytes)"
-vector 36 Wireless.host3.wlan[0].mac.queue queueLength:vector ETV
-attr interpolationmode sample-hold
-attr source "count(packetPushed) - count(packetPopped) - count(packetRemoved) - count(packetDropped)"
-attr title "queue length, vector"
-vector 37 Wireless.host3.wlan[0].mac.queue packetPopped:vector(packetBytes) ETV
-attr interpolationmode none
-attr title "packet popped, vector(packetBytes)"
-vector 38 Wireless.host3.wlan[0].mac.queue queueingTime:vector ETV
-attr interpolationmode none
-attr source queueingTime(packetPopped)
-attr title "queueing times, vector"
-attr unit s
-vector 39 Wireless.host3.wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 40 Wireless.host2.wlan[0].mac packetDropNotAddressedToUs:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetDropReasonIsNotAddressedToUs(packetDropped)
-attr title "packet drop: not addressed to us, vector(packetBytes)"
-vector 41 Wireless.host4.wlan[0].mac packetDropNotAddressedToUs:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetDropReasonIsNotAddressedToUs(packetDropped)
-attr title "packet drop: not addressed to us, vector(packetBytes)"
-vector 42 Wireless.host1.udp passedUpPk:vector(count) ETV
-attr interpolationmode none
-attr source packetSentToUpper
-attr title "packets passed up, vector(count)"
-vector 43 Wireless.host2.wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-vector 44 Wireless.host3.wlan[0].mac packetDropNotAddressedToUs:vector(packetBytes) ETV
-attr interpolationmode none
-attr source packetDropReasonIsNotAddressedToUs(packetDropped)
-attr title "packet drop: not addressed to us, vector(packetBytes)"
-vector 45 Wireless.host4.wlan[0].radio transmissionState:vector ETV
-attr interpolationmode sample-hold
-attr source transmissionStateChanged
-attr title "Radio transmission state, vector"
-0	10362 198 0 126 0 0.003768376946 11 0 3 22 56
-1	10560 73 0 83 0 0.002416196347 5 0 3 7 17
-2	10633 73 0 54 0 0.001452074587 5 0 3 7 17
-3	10706 75 0 111 0 0.003540310233 5 0 3 7 17
-4	10781 318 0 126 0 0.003768376946 15 0 3 17 35
-5	11099 335 0 127 0 0.003768424119 15 0 3 26 62
-6	11434 334 0 131 0 0.003768451533 15 0 3 26 62
-7	11768 334 0 129 0 0.003768443659 15 0 3 26 62
-8	12102 10 3 3 0 0 1 12 12 12 144
-9	12112 11 11 11 0 0 1 32 32 32 1024
-10	12123 12 11 11 0 0 1 32 32 32 1024
-11	12135 12 12 12 0 0 1 59 59 59 3481
-12	12147 22 12 12 0 0 2 0 1 1 1
-13	12169 12 12 12 0 0 1 59 59 59 3481
-14	12181 11 12 12 0 0 1 0 0 0 0
-15	12192 87 14 117 0 0.003540376946 4 12 12 48 576
-16	12279 11 14 14 0 0 1 1 1 1 1
-17	12290 358 16 126 0.00019 0.003768376946 16 0 2 16 24
-18	12648 25 25 25 0.000736047173 0.000736047173 1 12 12 12 144
-19	12673 24 25 25 0.000736047173 0.000736047173 1 1 1 1 1
-20	12697 25 27 27 0.000736047173 0.000736047173 1 12 12 12 144
-21	12722 25 29 29 0.000736047173 0.000736047173 1 59 59 59 3481
-22	12747 48 29 29 0.000736047173 0.000736047173 2 0 1 1 1
-23	12795 25 29 29 0.000736047173 0.000736047173 1 59 59 59 3481
-24	12820 24 29 29 0.000736047173 0.000736047173 1 0 0 0 0
-25	12844 25 33 33 0.000736066713 0.000736066713 1 12 12 12 144
-26	12869 24 33 33 0.000736066713 0.000736066713 1 1 1 1 1
-27	12893 25 35 35 0.000736066713 0.000736066713 1 12 12 12 144
-28	12918 25 37 37 0.000736066713 0.000736066713 1 59 59 59 3481
-29	12943 48 37 37 0.000736066713 0.000736066713 2 0 1 1 1
-30	12991 25 37 37 0.000736066713 0.000736066713 1 59 59 59 3481
-31	13016 24 37 37 0.000736066713 0.000736066713 1 0 0 0 0
-32	13040 25 41 41 0.000736074587 0.000736074587 1 12 12 12 144
-33	13065 24 41 41 0.000736074587 0.000736074587 1 1 1 1 1
-34	13089 25 43 43 0.000736074587 0.000736074587 1 12 12 12 144
-35	13114 25 45 45 0.000736074587 0.000736074587 1 59 59 59 3481
-36	13139 48 45 45 0.000736074587 0.000736074587 2 0 1 1 1
-37	13187 25 45 45 0.000736074587 0.000736074587 1 59 59 59 3481
-38	13212 24 45 45 0.000736074587 0.000736074587 1 0 0 0 0
-39	13236 96 49 54 0.000906074587 0.001452074587 4 0 2 4 6
-40	13332 51 56 113 0.001452107943 0.003540357406 2 59 59 118 6962
-41	13383 49 60 89 0.001452149174 0.00241624352 2 59 59 118 6962
-42	13432 72 62 117 0.001452149174 0.003540376946 3 1 3 6 14
-43	13504 96 78 83 0.001870196347 0.002416196347 4 0 2 4 6
-44	13600 50 85 120 0.002416229703 0.00354038482 2 59 59 118 6962
-45	13650 100 106 111 0.002994310233 0.003540310233 4 0 2 4 6
-
+vector 36 Wireless.host3
