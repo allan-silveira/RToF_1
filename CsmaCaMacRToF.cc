@@ -28,7 +28,6 @@
 #include "inet/linklayer/common/UserPriorityTag_m.h"
 #include "CsmaCaMacRToF.h"
 #include "Backoff_m.h"
-#include "Location_m.h"
 
 
 using namespace inet;
