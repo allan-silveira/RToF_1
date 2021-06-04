@@ -90,9 +90,11 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     virtual void handleCrashOperation(LifecycleOperation *operation) override;
 
     virtual double distanceCalc(simtime_t finalT, simtime_t iniT, simtime_t overhead, simtime_t backoff);
-    virtual void savePoints(const char *local);
+    virtual void saveXPoints(const char *local);
+    virtual void saveYPoints(const char *local);
     virtual const char* ConvertDoubleToString(double value1, double value2);
     virtual omnetpp::simtime_t Calibration(simtime_t StartT, simtime_t EndT, simtime_t backoffTime);
+    virtual void minMax(double *di);
 
     virtual void socketDataArrived(UdpSocket *socket, Packet *packet) override;
     virtual void socketErrorArrived(UdpSocket *socket, Indication *indication) override;
