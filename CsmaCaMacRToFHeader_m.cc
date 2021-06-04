@@ -243,7 +243,6 @@ void CsmaCaMacRToFHeader::copy(const CsmaCaMacRToFHeader& other)
     this->headerLengthField = other.headerLengthField;
     this->transmitterAddress = other.transmitterAddress;
     this->receiverAddress = other.receiverAddress;
-    this->backoffTime = other.backoffTime;
 }
 
 void CsmaCaMacRToFHeader::parsimPack(omnetpp::cCommBuffer *b) const
@@ -253,7 +252,6 @@ void CsmaCaMacRToFHeader::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->headerLengthField);
     doParsimPacking(b,this->transmitterAddress);
     doParsimPacking(b,this->receiverAddress);
-    doParsimPacking(b,this->backoffTime);
 }
 
 void CsmaCaMacRToFHeader::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -263,7 +261,6 @@ void CsmaCaMacRToFHeader::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->headerLengthField);
     doParsimUnpacking(b,this->transmitterAddress);
     doParsimUnpacking(b,this->receiverAddress);
-    doParsimUnpacking(b,this->backoffTime);
 }
 
 inet::CsmaCaMacRToFHeaderType CsmaCaMacRToFHeader::getType() const
@@ -310,17 +307,6 @@ void CsmaCaMacRToFHeader::setReceiverAddress(const MacAddress& receiverAddress)
     this->receiverAddress = receiverAddress;
 }
 
-omnetpp::simtime_t CsmaCaMacRToFHeader::getBackoffTime() const
-{
-    return this->backoffTime;
-}
-
-void CsmaCaMacRToFHeader::setBackoffTime(omnetpp::simtime_t backoffTime)
-{
-    handleChange();
-    this->backoffTime = backoffTime;
-}
-
 class CsmaCaMacRToFHeaderDescriptor : public omnetpp::cClassDescriptor
 {
   private:
@@ -330,7 +316,6 @@ class CsmaCaMacRToFHeaderDescriptor : public omnetpp::cClassDescriptor
         FIELD_headerLengthField,
         FIELD_transmitterAddress,
         FIELD_receiverAddress,
-        FIELD_backoffTime,
     };
   public:
     CsmaCaMacRToFHeaderDescriptor();
@@ -393,7 +378,7 @@ const char *CsmaCaMacRToFHeaderDescriptor::getProperty(const char *propertyname)
 int CsmaCaMacRToFHeaderDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 5+basedesc->getFieldCount() : 5;
+    return basedesc ? 4+basedesc->getFieldCount() : 4;
 }
 
 unsigned int CsmaCaMacRToFHeaderDescriptor::getFieldTypeFlags(int field) const
@@ -409,9 +394,8 @@ unsigned int CsmaCaMacRToFHeaderDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,    // FIELD_headerLengthField
         0,    // FIELD_transmitterAddress
         0,    // FIELD_receiverAddress
-        0,    // FIELD_backoffTime
     };
-    return (field >= 0 && field < 5) ? fieldTypeFlags[field] : 0;
+    return (field >= 0 && field < 4) ? fieldTypeFlags[field] : 0;
 }
 
 const char *CsmaCaMacRToFHeaderDescriptor::getFieldName(int field) const
@@ -427,9 +411,8 @@ const char *CsmaCaMacRToFHeaderDescriptor::getFieldName(int field) const
         "headerLengthField",
         "transmitterAddress",
         "receiverAddress",
-        "backoffTime",
     };
-    return (field >= 0 && field < 5) ? fieldNames[field] : nullptr;
+    return (field >= 0 && field < 4) ? fieldNames[field] : nullptr;
 }
 
 int CsmaCaMacRToFHeaderDescriptor::findField(const char *fieldName) const
@@ -440,7 +423,6 @@ int CsmaCaMacRToFHeaderDescriptor::findField(const char *fieldName) const
     if (fieldName[0] == 'h' && strcmp(fieldName, "headerLengthField") == 0) return base+1;
     if (fieldName[0] == 't' && strcmp(fieldName, "transmitterAddress") == 0) return base+2;
     if (fieldName[0] == 'r' && strcmp(fieldName, "receiverAddress") == 0) return base+3;
-    if (fieldName[0] == 'b' && strcmp(fieldName, "backoffTime") == 0) return base+4;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -457,9 +439,8 @@ const char *CsmaCaMacRToFHeaderDescriptor::getFieldTypeString(int field) const
         "uint8_t",    // FIELD_headerLengthField
         "inet::MacAddress",    // FIELD_transmitterAddress
         "inet::MacAddress",    // FIELD_receiverAddress
-        "omnetpp::simtime_t",    // FIELD_backoffTime
     };
-    return (field >= 0 && field < 5) ? fieldTypeStrings[field] : nullptr;
+    return (field >= 0 && field < 4) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **CsmaCaMacRToFHeaderDescriptor::getFieldPropertyNames(int field) const
@@ -537,7 +518,6 @@ std::string CsmaCaMacRToFHeaderDescriptor::getFieldValueAsString(void *object, i
         case FIELD_headerLengthField: return ulong2string(pp->getHeaderLengthField());
         case FIELD_transmitterAddress: return pp->getTransmitterAddress().str();
         case FIELD_receiverAddress: return pp->getReceiverAddress().str();
-        case FIELD_backoffTime: return simtime2string(pp->getBackoffTime());
         default: return "";
     }
 }
@@ -1457,6 +1437,288 @@ void *CsmaCaMacRToFTrailerDescriptor::getFieldStructValuePointer(void *object, i
         field -= basedesc->getFieldCount();
     }
     CsmaCaMacRToFTrailer *pp = (CsmaCaMacRToFTrailer *)object; (void)pp;
+    switch (field) {
+        default: return nullptr;
+    }
+}
+
+Register_Class(CsmaCaMacRToFBackoffHeader)
+
+CsmaCaMacRToFBackoffHeader::CsmaCaMacRToFBackoffHeader() : ::inet::BytesChunk()
+{
+}
+
+CsmaCaMacRToFBackoffHeader::CsmaCaMacRToFBackoffHeader(const CsmaCaMacRToFBackoffHeader& other) : ::inet::BytesChunk(other)
+{
+    copy(other);
+}
+
+CsmaCaMacRToFBackoffHeader::~CsmaCaMacRToFBackoffHeader()
+{
+}
+
+CsmaCaMacRToFBackoffHeader& CsmaCaMacRToFBackoffHeader::operator=(const CsmaCaMacRToFBackoffHeader& other)
+{
+    if (this == &other) return *this;
+    ::inet::BytesChunk::operator=(other);
+    copy(other);
+    return *this;
+}
+
+void CsmaCaMacRToFBackoffHeader::copy(const CsmaCaMacRToFBackoffHeader& other)
+{
+    this->backoffTime = other.backoffTime;
+}
+
+void CsmaCaMacRToFBackoffHeader::parsimPack(omnetpp::cCommBuffer *b) const
+{
+    ::inet::BytesChunk::parsimPack(b);
+    doParsimPacking(b,this->backoffTime);
+}
+
+void CsmaCaMacRToFBackoffHeader::parsimUnpack(omnetpp::cCommBuffer *b)
+{
+    ::inet::BytesChunk::parsimUnpack(b);
+    doParsimUnpacking(b,this->backoffTime);
+}
+
+omnetpp::simtime_t CsmaCaMacRToFBackoffHeader::getBackoffTime() const
+{
+    return this->backoffTime;
+}
+
+void CsmaCaMacRToFBackoffHeader::setBackoffTime(omnetpp::simtime_t backoffTime)
+{
+    handleChange();
+    this->backoffTime = backoffTime;
+}
+
+class CsmaCaMacRToFBackoffHeaderDescriptor : public omnetpp::cClassDescriptor
+{
+  private:
+    mutable const char **propertynames;
+    enum FieldConstants {
+        FIELD_backoffTime,
+    };
+  public:
+    CsmaCaMacRToFBackoffHeaderDescriptor();
+    virtual ~CsmaCaMacRToFBackoffHeaderDescriptor();
+
+    virtual bool doesSupport(omnetpp::cObject *obj) const override;
+    virtual const char **getPropertyNames() const override;
+    virtual const char *getProperty(const char *propertyname) const override;
+    virtual int getFieldCount() const override;
+    virtual const char *getFieldName(int field) const override;
+    virtual int findField(const char *fieldName) const override;
+    virtual unsigned int getFieldTypeFlags(int field) const override;
+    virtual const char *getFieldTypeString(int field) const override;
+    virtual const char **getFieldPropertyNames(int field) const override;
+    virtual const char *getFieldProperty(int field, const char *propertyname) const override;
+    virtual int getFieldArraySize(void *object, int field) const override;
+
+    virtual const char *getFieldDynamicTypeString(void *object, int field, int i) const override;
+    virtual std::string getFieldValueAsString(void *object, int field, int i) const override;
+    virtual bool setFieldValueAsString(void *object, int field, int i, const char *value) const override;
+
+    virtual const char *getFieldStructName(int field) const override;
+    virtual void *getFieldStructValuePointer(void *object, int field, int i) const override;
+};
+
+Register_ClassDescriptor(CsmaCaMacRToFBackoffHeaderDescriptor)
+
+CsmaCaMacRToFBackoffHeaderDescriptor::CsmaCaMacRToFBackoffHeaderDescriptor() : omnetpp::cClassDescriptor(omnetpp::opp_typename(typeid(inet::CsmaCaMacRToFBackoffHeader)), "inet::BytesChunk")
+{
+    propertynames = nullptr;
+}
+
+CsmaCaMacRToFBackoffHeaderDescriptor::~CsmaCaMacRToFBackoffHeaderDescriptor()
+{
+    delete[] propertynames;
+}
+
+bool CsmaCaMacRToFBackoffHeaderDescriptor::doesSupport(omnetpp::cObject *obj) const
+{
+    return dynamic_cast<CsmaCaMacRToFBackoffHeader *>(obj)!=nullptr;
+}
+
+const char **CsmaCaMacRToFBackoffHeaderDescriptor::getPropertyNames() const
+{
+    if (!propertynames) {
+        static const char *names[] = {  nullptr };
+        omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+        const char **basenames = basedesc ? basedesc->getPropertyNames() : nullptr;
+        propertynames = mergeLists(basenames, names);
+    }
+    return propertynames;
+}
+
+const char *CsmaCaMacRToFBackoffHeaderDescriptor::getProperty(const char *propertyname) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    return basedesc ? basedesc->getProperty(propertyname) : nullptr;
+}
+
+int CsmaCaMacRToFBackoffHeaderDescriptor::getFieldCount() const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    return basedesc ? 1+basedesc->getFieldCount() : 1;
+}
+
+unsigned int CsmaCaMacRToFBackoffHeaderDescriptor::getFieldTypeFlags(int field) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldTypeFlags(field);
+        field -= basedesc->getFieldCount();
+    }
+    static unsigned int fieldTypeFlags[] = {
+        0,    // FIELD_backoffTime
+    };
+    return (field >= 0 && field < 1) ? fieldTypeFlags[field] : 0;
+}
+
+const char *CsmaCaMacRToFBackoffHeaderDescriptor::getFieldName(int field) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldName(field);
+        field -= basedesc->getFieldCount();
+    }
+    static const char *fieldNames[] = {
+        "backoffTime",
+    };
+    return (field >= 0 && field < 1) ? fieldNames[field] : nullptr;
+}
+
+int CsmaCaMacRToFBackoffHeaderDescriptor::findField(const char *fieldName) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    int base = basedesc ? basedesc->getFieldCount() : 0;
+    if (fieldName[0] == 'b' && strcmp(fieldName, "backoffTime") == 0) return base+0;
+    return basedesc ? basedesc->findField(fieldName) : -1;
+}
+
+const char *CsmaCaMacRToFBackoffHeaderDescriptor::getFieldTypeString(int field) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldTypeString(field);
+        field -= basedesc->getFieldCount();
+    }
+    static const char *fieldTypeStrings[] = {
+        "omnetpp::simtime_t",    // FIELD_backoffTime
+    };
+    return (field >= 0 && field < 1) ? fieldTypeStrings[field] : nullptr;
+}
+
+const char **CsmaCaMacRToFBackoffHeaderDescriptor::getFieldPropertyNames(int field) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldPropertyNames(field);
+        field -= basedesc->getFieldCount();
+    }
+    switch (field) {
+        default: return nullptr;
+    }
+}
+
+const char *CsmaCaMacRToFBackoffHeaderDescriptor::getFieldProperty(int field, const char *propertyname) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldProperty(field, propertyname);
+        field -= basedesc->getFieldCount();
+    }
+    switch (field) {
+        default: return nullptr;
+    }
+}
+
+int CsmaCaMacRToFBackoffHeaderDescriptor::getFieldArraySize(void *object, int field) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldArraySize(object, field);
+        field -= basedesc->getFieldCount();
+    }
+    CsmaCaMacRToFBackoffHeader *pp = (CsmaCaMacRToFBackoffHeader *)object; (void)pp;
+    switch (field) {
+        default: return 0;
+    }
+}
+
+const char *CsmaCaMacRToFBackoffHeaderDescriptor::getFieldDynamicTypeString(void *object, int field, int i) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldDynamicTypeString(object,field,i);
+        field -= basedesc->getFieldCount();
+    }
+    CsmaCaMacRToFBackoffHeader *pp = (CsmaCaMacRToFBackoffHeader *)object; (void)pp;
+    switch (field) {
+        default: return nullptr;
+    }
+}
+
+std::string CsmaCaMacRToFBackoffHeaderDescriptor::getFieldValueAsString(void *object, int field, int i) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldValueAsString(object,field,i);
+        field -= basedesc->getFieldCount();
+    }
+    CsmaCaMacRToFBackoffHeader *pp = (CsmaCaMacRToFBackoffHeader *)object; (void)pp;
+    switch (field) {
+        case FIELD_backoffTime: return simtime2string(pp->getBackoffTime());
+        default: return "";
+    }
+}
+
+bool CsmaCaMacRToFBackoffHeaderDescriptor::setFieldValueAsString(void *object, int field, int i, const char *value) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->setFieldValueAsString(object,field,i,value);
+        field -= basedesc->getFieldCount();
+    }
+    CsmaCaMacRToFBackoffHeader *pp = (CsmaCaMacRToFBackoffHeader *)object; (void)pp;
+    switch (field) {
+        default: return false;
+    }
+}
+
+const char *CsmaCaMacRToFBackoffHeaderDescriptor::getFieldStructName(int field) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldStructName(field);
+        field -= basedesc->getFieldCount();
+    }
+    switch (field) {
+        default: return nullptr;
+    };
+}
+
+void *CsmaCaMacRToFBackoffHeaderDescriptor::getFieldStructValuePointer(void *object, int field, int i) const
+{
+    omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
+    if (basedesc) {
+        if (field < basedesc->getFieldCount())
+            return basedesc->getFieldStructValuePointer(object, field, i);
+        field -= basedesc->getFieldCount();
+    }
+    CsmaCaMacRToFBackoffHeader *pp = (CsmaCaMacRToFBackoffHeader *)object; (void)pp;
     switch (field) {
         default: return nullptr;
     }

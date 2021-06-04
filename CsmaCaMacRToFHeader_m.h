@@ -23,6 +23,7 @@ class CsmaCaMacRToFHeader;
 class CsmaCaMacRToFAckHeader;
 class CsmaCaMacRToFDataHeader;
 class CsmaCaMacRToFTrailer;
+class CsmaCaMacRToFBackoffHeader;
 } // namespace inet
 
 #include "inet/common/INETDefs_m.h" // import inet.common.INETDefs
@@ -60,7 +61,6 @@ enum CsmaCaMacRToFHeaderType {
  *     uint8_t headerLengthField;    // header length in bytes, max value is 255 (1 byte)
  *     MacAddress transmitterAddress;    // (6 byte)
  *     MacAddress receiverAddress;    // (6 byte)
- *     simtime_t backoffTime;
  * }
  * </pre>
  */
@@ -71,7 +71,6 @@ class CsmaCaMacRToFHeader : public ::inet::FieldsChunk
     uint8_t headerLengthField = 0;
     MacAddress transmitterAddress;
     MacAddress receiverAddress;
-    omnetpp::simtime_t backoffTime = SIMTIME_ZERO;
 
   private:
     void copy(const CsmaCaMacRToFHeader& other);
@@ -100,15 +99,13 @@ class CsmaCaMacRToFHeader : public ::inet::FieldsChunk
     virtual const MacAddress& getReceiverAddress() const;
     virtual MacAddress& getReceiverAddressForUpdate() { handleChange();return const_cast<MacAddress&>(const_cast<CsmaCaMacRToFHeader*>(this)->getReceiverAddress());}
     virtual void setReceiverAddress(const MacAddress& receiverAddress);
-    virtual omnetpp::simtime_t getBackoffTime() const;
-    virtual void setBackoffTime(omnetpp::simtime_t backoffTime);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFHeader& obj) {obj.parsimPack(b);}
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFHeader& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>CsmaCaMacRToFHeader.msg:40</tt> by nedtool.
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:39</tt> by nedtool.
  * <pre>
  * class CsmaCaMacRToFAckHeader extends CsmaCaMacRToFHeader
  * {
@@ -144,7 +141,7 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFAckHeade
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFAckHeader& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>CsmaCaMacRToFHeader.msg:46</tt> by nedtool.
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:45</tt> by nedtool.
  * <pre>
  * class CsmaCaMacRToFDataHeader extends CsmaCaMacRToFHeader
  * {
@@ -188,7 +185,7 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFDataHead
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFDataHeader& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>CsmaCaMacRToFHeader.msg:54</tt> by nedtool.
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:53</tt> by nedtool.
  * <pre>
  * class CsmaCaMacRToFTrailer extends FieldsChunk
  * {
@@ -229,6 +226,44 @@ class CsmaCaMacRToFTrailer : public ::inet::FieldsChunk
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFTrailer& obj) {obj.parsimPack(b);}
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFTrailer& obj) {obj.parsimUnpack(b);}
+
+/**
+ * Class generated from <tt>CsmaCaMacRToFHeader.msg:60</tt> by nedtool.
+ * <pre>
+ * class CsmaCaMacRToFBackoffHeader extends BytesChunk
+ * {
+ *     simtime_t backoffTime; // (8 bytes)
+ * }
+ * </pre>
+ */
+class CsmaCaMacRToFBackoffHeader : public ::inet::BytesChunk
+{
+  protected:
+    omnetpp::simtime_t backoffTime = SIMTIME_ZERO;
+
+  private:
+    void copy(const CsmaCaMacRToFBackoffHeader& other);
+
+  protected:
+    // protected and unimplemented operator==(), to prevent accidental usage
+    bool operator==(const CsmaCaMacRToFBackoffHeader&);
+
+  public:
+    CsmaCaMacRToFBackoffHeader();
+    CsmaCaMacRToFBackoffHeader(const CsmaCaMacRToFBackoffHeader& other);
+    virtual ~CsmaCaMacRToFBackoffHeader();
+    CsmaCaMacRToFBackoffHeader& operator=(const CsmaCaMacRToFBackoffHeader& other);
+    virtual CsmaCaMacRToFBackoffHeader *dup() const override {return new CsmaCaMacRToFBackoffHeader(*this);}
+    virtual void parsimPack(omnetpp::cCommBuffer *b) const override;
+    virtual void parsimUnpack(omnetpp::cCommBuffer *b) override;
+
+    // field getter/setter methods
+    virtual omnetpp::simtime_t getBackoffTime() const;
+    virtual void setBackoffTime(omnetpp::simtime_t backoffTime);
+};
+
+inline void doParsimPacking(omnetpp::cCommBuffer *b, const CsmaCaMacRToFBackoffHeader& obj) {obj.parsimPack(b);}
+inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CsmaCaMacRToFBackoffHeader& obj) {obj.parsimUnpack(b);}
 
 } // namespace inet
 

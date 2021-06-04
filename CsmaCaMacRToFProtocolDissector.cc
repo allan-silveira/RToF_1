@@ -30,6 +30,8 @@ Register_Protocol_Dissector(&Protocol::csmaCaMacRToF, CsmaCaMacRToFProtocolDisse
 
 void CsmaCaMacRToFProtocolDissector::dissect(Packet *packet, const Protocol *protocol, ICallback& callback) const
 {
+//    std::cout << "Inside dissector before"  <<endl;
+    auto rtofheader = packet->popAtFront<CsmaCaMacRToFBackoffHeader>();
     auto header = packet->popAtFront<CsmaCaMacRToFHeader>();
     auto trailer = packet->popAtBack<CsmaCaMacRToFTrailer>(B(4));
     callback.startProtocolDataUnit(&Protocol::csmaCaMacRToF);

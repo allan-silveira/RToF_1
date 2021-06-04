@@ -37,6 +37,7 @@
 #include "Backoff_m.h"
 #include <fstream>
 
+
 using namespace inet;
 
 Define_Module(RToFApp);
@@ -350,7 +351,6 @@ void RToFApp::processPacket(Packet *pk)
         std::cout << "-------------" << endl;
         std::cout << "Broadcast time: " << IniTime << endl;
         broadcastTime = IniTime;
-        //std::cout << "-T-E-S-T::" << pk->getCreationTime() << endl;
 
         cModule *host = getContainingNode(this);
         std::cout << "host : " << host << endl;
@@ -373,7 +373,6 @@ void RToFApp::processPacket(Packet *pk)
         }
 
         auto endTime = signalTimeTag->getEndTime();
-        EV << "endTime = " << endTime << endl;
         std::cout << "endTime = " << endTime << endl;
 
 
@@ -383,9 +382,6 @@ void RToFApp::processPacket(Packet *pk)
 
         auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142,  backoffTime->getBackoffTime());
         std::cout << "Distance between hosts getting auto backoff= " << dist << endl;
-
-        auto dist2 = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, backoffTime->getInitialBackoffTime());
-        std::cout << "Distance between with getting difference time on cancelbackoff hosts= " << dist2 << endl;
 
 
 //        if(hostName.str() == "10.0.0.2"){

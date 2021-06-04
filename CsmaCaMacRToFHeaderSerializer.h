@@ -48,6 +48,16 @@ class INET_API CsmaCaMacRToFTrailerSerializer : public FieldsChunkSerializer
   public:
     CsmaCaMacRToFTrailerSerializer() : FieldsChunkSerializer() {}
 };
+
+class INET_API CsmaCaMacRToFBackoffHeaderSerializer : public FieldsChunkSerializer
+{
+  protected:
+    virtual void serialize(MemoryOutputStream& stream, const Ptr<const Chunk>& chunk) const override;
+    virtual const Ptr<Chunk> deserialize(MemoryInputStream& stream) const override;
+
+  public:
+    CsmaCaMacRToFBackoffHeaderSerializer() : FieldsChunkSerializer() {}
+};
  // namespace inet
 
 #endif // ifndef __INET_CsmaCaMacRToFHEADERSERIALIZER_H

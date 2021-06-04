@@ -26,9 +26,11 @@ Register_Serializer(CsmaCaMacRToFHeader, CsmaCaMacRToFHeaderSerializer);
 Register_Serializer(CsmaCaMacRToFDataHeader, CsmaCaMacRToFHeaderSerializer);
 Register_Serializer(CsmaCaMacRToFAckHeader, CsmaCaMacRToFHeaderSerializer);
 Register_Serializer(CsmaCaMacRToFTrailer, CsmaCaMacRToFTrailerSerializer);
+Register_Serializer(CsmaCaMacRToFBackoffHeader, CsmaCaMacRToFBackoffHeaderSerializer);
 
 void CsmaCaMacRToFHeaderSerializer::serialize(MemoryOutputStream& stream, const Ptr<const Chunk>& chunk) const
 {
+//    std::cout << "Inside serialize CsmaCaMacRToFHeaderSerializer"  <<endl;
     auto startPos = stream.getLength();
     if (auto macHeader = dynamicPtrCast<const CsmaCaMacRToFDataHeader>(chunk)) {
         stream.writeUint8(macHeader->getType());
@@ -56,6 +58,7 @@ void CsmaCaMacRToFHeaderSerializer::serialize(MemoryOutputStream& stream, const 
 
 const Ptr<Chunk> CsmaCaMacRToFHeaderSerializer::deserialize(MemoryInputStream& stream) const
 {
+//    std::cout << "Inside deserialize CsmaCaMacRToFHeaderSerializer"  <<endl;
     auto startPos = stream.getPosition();
     CsmaCaMacRToFHeaderType type = static_cast<CsmaCaMacRToFHeaderType>(stream.readUint8());
     uint8_t length = stream.readUint8();
@@ -104,6 +107,31 @@ const Ptr<Chunk> CsmaCaMacRToFTrailerSerializer::deserialize(MemoryInputStream& 
     macTrailer->setFcs(fcs);
     macTrailer->setFcsMode(FCS_COMPUTED);
     return macTrailer;
+}
+
+void CsmaCaMacRToFBackoffHeaderSerializer::serialize(MemoryOutputStream& stream, const Ptr<const Chunk>& chunk) const
+{
+    auto startPos = stream.getLength();
+//    std::cout << "Inside serialize CsmaCaMacRToFBackoffHeader"  <<endl;
+    if (auto macHeader = dynamicPtrCast<const CsmaCaMacRToFBackoffHeader>(chunk)) {
+        stream.writeUint64Be(uint64(macHeader->getBackoffTime().raw()));
+//        if (macHeader->getChunkLength() > stream.getLength() - startPos)
+//            stream.writeByteRepeatedly('?', B(macHeader->getChunkLength() - (stream.getLength() - startPos)).get());
+    }
+    else
+        throw cRuntimeError("CsmaCaMacRToFSerializer: cannot serialize chunk");
+}
+
+const Ptr<Chunk> CsmaCaMacRToFBackoffHeaderSerializer::deserialize(MemoryInputStream& stream) const
+{
+//    std::cout << "Inside deserialize backOffTime " <<endl;
+    auto startPos = stream.getPosition();
+    auto macHeader = makeShared<CsmaCaMacRToFBackoffHeader>();
+    macHeader->setBackoffTime(macHeader->getBackoffTime().setRaw(stream.readUint64Be()));
+
+//    if (B(length) > stream.getPosition() - startPos)
+//        stream.readByteRepeatedly('?', length - B(stream.getPosition() - startPos).get());
+    return macHeader;
 }
 
 // namespace inet
