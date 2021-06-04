@@ -385,28 +385,6 @@ void RToFApp::processPacket(Packet *pk)
         auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142,  backoffTime->getBackoffTime());
         std::cout << "Distance between hosts getting auto backoff= " << dist << endl;
 
-
-//        if(hostName.str() == "10.0.0.2"){
-////            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-//            auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, 0.001084149174);
-//            std::cout << "Distance between hosts TEST EXTREME= " << dist << endl;
-//        }//else{
-////            std::cout << "--BACKOFF-- = " << backoffTime->getBackoffTime() << endl;
-////            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.000824 + 0.000824, 0.00056, backoffTime->getInitialBackoffTime());
-////            std::cout << "Distance between hosts= " << dist << endl;
-////        }
-//        //tests environment with 3 hosts
-//        else if(hostName.str() == "10.0.0.4"){
-//            auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142, 0.00220824352);
-//            std::cout << "Distance between TEST EXTREME= " << dist << endl;
-//        }//else{
-//            auto backoffTest2host = 0.00036 + 0.00028 + 0.000543;
-//            auto dist = distanceCalc(pk->getArrivalTime(), 0.001142 + 0.00005 + 0.000546 + 0.000218 + 0.000080066713 + 0.000010066713, backoffTime->getBackoffTime(), backoffTime->getInitialBackoffTime());
-//            std::cout << "Distance between hosts= " << dist << endl;
-//        }
-
-//        std::cout << "arrival = " << pk->getArrivalTime() << endl;
-//        std::cout << "Distance between hosts= " << dist << endl;
         std::cout << " " << endl;
         std::cout << " " << endl;
         double auxVet[3];
@@ -499,42 +477,42 @@ void RToFApp::minMax(double *di)
 //}
 
 void RToFApp::saveXPoints(const char *local){
-    char loc[strlen(local)];
-    strcpy(loc, local);
-    char x[0];
+    int i;
+    char x[10];
     char aux[] = ",";
     int j = 0;
     std::cout << "----TESTE local: " << local << endl;
-    for(int i = 0;loc[i] != aux[0];i++){
-        x[i] = loc[i];
+    for(i = 0;local[i] != aux[0];i++){
+        x[i] = local[i];
     }
 
+    x[i] = '\0';
     std::cout << "----TESTE X: " << x << endl;
     xVector.push_back(atof(x));
-    for (unsigned int i = 0; i < xVector.size(); i++)
+    std::cout << "----xVector size: " << xVector.size() << endl;
+    for (i = 0; i < xVector.size(); i++)
     {
-        std::cout << "VECTORRRR X: " << xVector[i] <<"," << endl;
+        std::cout << "VECTORRRR X: " << xVector[i] << "," << endl;
     }
     std::cout << " " << endl;
+
 }
 
 void RToFApp::saveYPoints(const char *local){
-    char loc[strlen(local)];
-    strcpy(loc, local);
-    char x[0];
-    char y[0];
+    char y[10];
     char aux[] = ",";
     int j = 0;
     int k = 0;
     std::cout << "----TESTE local: " << local << endl;
-    for(int i = 0;loc[i] != aux[0];i++){
+    for(int i = 0;local[i] != aux[0];i++){
        j = i;
     }
 
-    for(int i = j+2; i< strlen(loc); i++){
-        y[k] = loc[i];
+    for(int i = j+2; i< strlen(local); i++){
+        y[k] = local[i];
         k++;
     }
+    y[k] = '\0';
 
     std::cout << "----TESTE Y: " << y << endl;
     yVector.push_back(atof(y));
