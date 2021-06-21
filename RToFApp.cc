@@ -10,9 +10,11 @@
 
 #include <chrono>
 
+#include <Eigen/Dense>
 #include <iostream>
 #include <iomanip>
-#include<algorithm>
+#include <algorithm>
+
 
 #include <vector>
 
@@ -53,17 +55,24 @@ simtime_t backoffTest;
 void RToFApp::initialize(int stage)
 {
     ApplicationBase::initialize(stage);
+
     std::vector<double> xVector;
     std::vector<double> yVector;
+    std::vector<double> di;
 
     if (stage == INITSTAGE_LOCAL) {
         numSent = 0;
         numReceived = 0;
         WATCH(numSent);
         WATCH(numReceived);
+        minMax_x  = 0;
+        minMax_y  = 0;
+        mL_x = 0;
+        mL_y = 0;
 
         aux = par("aux");
 
+        arqName = par("arqName");
         localPort = par("localPort");
         destPort = par("destPort");
         isReceiver = par("isReceiver");
@@ -193,8 +202,6 @@ void RToFApp::sendPacket()
     emit(packetSentSignal, packet);
     socket.sendTo(packet, destAddr, destPort);
 
-    //broadcastTime = simTime();
-
     numSent++;
 
 }
@@ -248,8 +255,66 @@ void RToFApp::handleMessageWhenUp(cMessage *msg)
 
 void RToFApp::finish()
 {
-    recordScalar("packets sent", numSent);
-    recordScalar("packets received", numReceived);
+    if (!isReceiver){
+        std::ifstream arq;
+        std::ofstream myfile;
+
+        arq.open(arqName);
+
+        if(arq.is_open()){
+            myfile.open (arqName,std::ios::app);
+
+            for(int i = 0; i < xVector.size(); i++){
+                myfile.precision(10);
+                myfile<<std::fixed;
+                myfile<<timeFlight[i]<<",";
+            }
+            for(int i = 0; i < xVector.size(); i++){
+                myfile<<di[i]<<",";
+            }
+
+            myfile<<minMax_x<<","<<minMax_y<<",";
+            myfile<<mL_x<<","<<mL_y<<",";
+            myfile<<realPosition.x<<","<<realPosition.y<<",";
+
+            myfile<<"\n";
+        }else{
+            myfile.open(arqName);
+
+            for(int i = 0; i < xVector.size(); i++){
+                myfile << "Overhead + backofftime " << i << "(s),";
+            }
+
+            for(int i = 0; i < xVector.size(); i++){
+                myfile << "Distance host " << i << "(m),";
+            }
+            myfile << "Min max position X (m),";
+            myfile << "Min max position Y (m),";
+            myfile << "Likelihood position X (m),";
+            myfile << "Likelihood position Y (m),";
+            myfile << "Real position X (m),";
+            myfile << "Real position Y (m)";
+
+            myfile<<"\n";
+
+            for(int i = 0; i < xVector.size(); i++){
+                myfile.precision(10);
+                myfile<<std::fixed;
+                myfile<<timeFlight[i]<<",";
+            }
+            for(int i = 0; i < xVector.size(); i++){
+                myfile<<di[i]<<",";
+            }
+            myfile<<minMax_x<<","<<minMax_y<<",";
+            myfile<<mL_x<<","<<mL_y<<",";
+            myfile<<realPosition.x<<","<<realPosition.y<<",";
+
+            myfile<<"\n";
+        }
+        myfile.close();
+        arq.close();
+    }
+
     ApplicationBase::finish();
 }
 
@@ -309,19 +374,13 @@ void RToFApp::processPacket(Packet *pk)
         IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
         auto real_position = mobility->getCurrentPosition();
 
-        double x = mobility->getCurrentPosition().x;
-        double y = mobility->getCurrentPosition().y;
-
-        packet->setName(ConvertDoubleToString(x, y));
+        auto pos = mobility->getCurrentPosition();
+        packet->setName(pos.str().c_str());
 
         packet->setTimestamp(signalTimeTag->getStartTime());
         std::cout << "-------------------------" <<  endl;
         std::cout << "host : " << host << endl;
 
-        //alterado agora std::cout << "T-E-S-T Backoff: " << pk->getTag<backoff>()->getBackoffTime() <<endl;
-
-//        std::cout << "T-E-S-T start T : " << signalTimeTag->getStartTime() <<endl;
-//        std::cout << "T-E-S-T end T: " << signalTimeTag->getEndTime() <<endl;
 
         auto tags=payload->addTag<CreationTimeTag>();
         tags->setCreationTime(signalTimeTag->getEndTime());
@@ -331,19 +390,9 @@ void RToFApp::processPacket(Packet *pk)
         emit(packetSentSignal, packet);
         socket.sendTo(packet, destAddr, destPort);
 
-//        L3Address hostName = l3Addresses->getSrcAddress();
-//        auto dist = distanceCalc( pk->getSendingTime());
-//        std::cout << "-------------" << endl;
-//        std::cout << "-------------" << endl;
-//        std::cout << "host: " << host << " -- IP:" << hostName << endl;
-//        std::cout << "real position = " << real_position << endl;
-//        std::cout << "sending = " << pk->getSendingTime() << endl;
-//        std::cout << "Distance between hosts= " << dist << endl;
-//        std::cout << "-------------" << endl;
-//        std::cout << "-------------" << endl;
         numSent++;
 
-        std::cout << "real position->> X = " << x << " e Y = "<<y<<endl;
+        std::cout << "real position->> " << pos <<endl;
         std::cout << "-------------------------" <<  endl;
     }else{
         //saveTime(pk->getTimestamp());
@@ -363,8 +412,8 @@ void RToFApp::processPacket(Packet *pk)
         //std::cout << "position host sender = " << pk->getFullName() << endl;
 
 
-         saveXPoints(pk->getFullName());
-         saveYPoints(pk->getFullName());
+        saveXPoints(pk->getFullName());
+        saveYPoints(pk->getFullName());
 
         auto backoffTime = pk->getTag<backoff>(); //getting backoffTime do CSMA
 
@@ -387,11 +436,20 @@ void RToFApp::processPacket(Packet *pk)
 
         std::cout << " " << endl;
         std::cout << " " << endl;
-        double auxVet[3];
-        auxVet[0] = 22.46;
-        auxVet[1] = 14.14;
-        auxVet[2] = 20.0;
-        minMax(auxVet);
+
+        di.push_back(dist);
+
+        for (unsigned int i = 0; i < yVector.size(); i++)
+        {
+            std::cout << "di: " << di[i] <<",   Time Flight: " << timeFlight[i] << endl;
+        }
+
+        minMax();
+        mL();
+        //getting the real position
+        IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
+        realPosition = mobility->getCurrentPosition();
+
         std::cout << "-------------" << endl;
     }
     delete pk;
@@ -425,34 +483,58 @@ void RToFApp::handleCrashOperation(LifecycleOperation *operation)
 double RToFApp::distanceCalc(simtime_t finalT, simtime_t iniT, simtime_t overhead, simtime_t backoff)
 {
     double distance = ((299792458 * (finalT - iniT - overhead - backoff ).dbl())/2.0); // overhead, this was found through an environment with two hosts at a distance of 1m, thus calculating the distance, the result with verhead was subtracted of the real distance
+    timeFlight.push_back((overhead + backoff ).dbl());
     return distance;
 }
 
-void RToFApp::minMax(double *di)
+void RToFApp::minMax()
 {
     double xv[4], yv[4];
-    double x, y, x1, x2, y1, y2;
-    for(int i = 0; i <= xVector.size(); i++){
-        if(xv[0] < (xVector[i] - di[i]))
+    std::cout << "testing min max X0: "<< xv[0] << endl;
+    double x1, x2, y1, y2;
+
+    for(int i = 0; i < xVector.size(); i++){
+        if(i==0)
+        {
             xv[0] = xVector[i] - di[i];
-        else if(yv[0] < (yVector[i] - di[i]))
             yv[0] = yVector[i] - di[i];
-        else if(xv[1] < (xVector[i] - di[i]))
             xv[1] = xVector[i] - di[i];
-        else if(yv[1] > (yVector[i] - di[i]))
             yv[1] = yVector[i] - di[i];
-        else if(xv[2] > (xVector[i] + di[i]))
             xv[2] = xVector[i] + di[i];
-        else if(yv[2] > (yVector[i] - di[i]))
             yv[2] = yVector[i] - di[i];
-        else if(xv[3] > (xVector[i] + di[i]))
             xv[3] = xVector[i] + di[i];
-        else if(yv[3] < (yVector[i] - di[i]))
             yv[3] = yVector[i] - di[i];
+        }
+        else
+        {
+            if(xv[0] < (xVector[i] - di[i]))
+                xv[0] = xVector[i] - di[i];
+
+            else if(yv[0] < (yVector[i] - di[i]))
+                yv[0] = yVector[i] - di[i];
+
+            else if(xv[1] < (xVector[i] - di[i]))
+                xv[1] = xVector[i] - di[i];
+
+            else if(yv[1] > (yVector[i] - di[i]))
+                yv[1] = yVector[i] - di[i];
+
+            else if(xv[2] > (xVector[i] + di[i]))
+                xv[2] = xVector[i] + di[i];
+
+            else if(yv[2] > (yVector[i] - di[i]))
+                yv[2] = yVector[i] - di[i];
+
+            else if(xv[3] > (xVector[i] + di[i]))
+                xv[3] = xVector[i] + di[i];
+
+            else if(yv[3] < (yVector[i] - di[i]))
+                yv[3] = yVector[i] - di[i];
+        }
     }
     std::cout << "testing min max v1: " << xv[0] << ", "<< yv[0] << " v2: " << xv[1] <<","<< yv[1] <<" v3: "<< xv[2]<< ","<< yv[2]<< " v4: "<< xv[3]<<","<< yv[3] << endl;
 
-    for(int i = 0; i <= xVector.size(); i++){
+    for(int i = 0; i < xVector.size(); i++){
         if(x1 > (xv[i] + di[i]))
             x1 = xv[i] + di[i];
         else if (x2 < (xv[i] - di[i]))
@@ -462,34 +544,52 @@ void RToFApp::minMax(double *di)
         else if (y2 < (yv[i] - di[i]))
             y2 = yv[i] - di[i];
     }
-    x = (x1 + x2)/2;
-    y = (y1 + y2)/2;
-    std::cout << "testing min max X0: "<< x <<" Y0: " << y << endl;
+    minMax_x = (x1 + x2);
+    minMax_y = (y1 + y2);
+    std::cout << "testing min max X0: "<< minMax_x <<" Y0: " << minMax_y << endl;
 }
 
-//double RToFApp::max(double di, double val){
-//    double aux = 0;
-//    for(int i = 0; i <= xVector.size(); i++){
-//        if(aux < val - di)
-//            aux = val - di;
-//
-//    }
-//}
+void RToFApp::mL(){
+    int numH = xVector.size();
+    Eigen::MatrixXd A(numH - 1, 2);
+    Eigen::MatrixXd b(numH - 1, 1);
+    for(int i = 0; i < numH - 1; i++){
+        A(i,0)=2*(xVector[numH - 1] - xVector[i]);
+    }
+    for(int i = 0; i < numH - 1; i++){
+        A(i,1)=2*(yVector[numH - 1] - yVector[i]);
+    }
+    std::cout << "testing matrix: "<< endl << A << endl;
+    for(int i = 0; i < numH - 1; i++){
+        b(i,0) = (-(pow(xVector[i],2)) - (pow(yVector[i],2)) + (pow(di[i],2))) - (-(pow(xVector[numH - 1],2)) - (pow(yVector[numH - 1],2)) + pow(di[numH - 1],2));
+    }
+
+
+    Eigen::MatrixXd A_i(2,2);
+    Eigen::MatrixXd A_t(2,2);
+    A_t = A.transpose();
+    std::cout << "Resultado A_t: " << endl << A_t <<endl;
+    A_i = (A_t * A).inverse();
+    A = A_i * A_t * b;
+    mL_x = A(0,0);
+    mL_y = A(1,0);
+    std::cout << "Resultado x,y: " << endl << mL_x << ", " << mL_y <<endl;
+}
+
 
 void RToFApp::saveXPoints(const char *local){
     int i;
-    char x[10];
+    char x[12];
     char aux[] = ",";
     int j = 0;
     std::cout << "----TESTE local: " << local << endl;
-    for(i = 0;local[i] != aux[0];i++){
-        x[i] = local[i];
+    for(i = 0;local[i+1] != aux[0];i++){
+        x[i] = local[i+1];
     }
 
     x[i] = '\0';
     std::cout << "----TESTE X: " << x << endl;
     xVector.push_back(atof(x));
-    std::cout << "----xVector size: " << xVector.size() << endl;
     for (i = 0; i < xVector.size(); i++)
     {
         std::cout << "VECTORRRR X: " << xVector[i] << "," << endl;
@@ -499,7 +599,7 @@ void RToFApp::saveXPoints(const char *local){
 }
 
 void RToFApp::saveYPoints(const char *local){
-    char y[10];
+    char y[12];
     char aux[] = ",";
     int j = 0;
     int k = 0;

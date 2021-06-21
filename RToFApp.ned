@@ -24,6 +24,7 @@ simple RToFApp like IApp
         //*.interfaceTableModule = default(absPath(".interfaceTable"));
         int aux = default(0);
         bool isReceiver = default(true);
+        string arqName = default(""); 
         int localPort = default(-1);  // local port (-1: use ephemeral port)
         string destAddresses = default(""); // list of IP addresses, separated by spaces ("": don't send)
         string localAddress = default("");

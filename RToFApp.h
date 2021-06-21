@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#include <Eigen/Dense>
+
 #include "inet/common/INETDefs.h"
 #include "Listener.h"
 
@@ -36,6 +38,9 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
   protected:
     enum SelfMsgKinds { START = 1, SEND, STOP };
     int aux = 0;
+    const char* arqName = nullptr;
+    Coord realPosition;
+    double minMax_x, minMax_y, mL_x, mL_y;
     // parameters
     std::vector<L3Address> destAddresses;
     std::vector<std::string> destAddressStr;
@@ -58,6 +63,8 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     simtime_t broadcastTime;
     std::vector<double> xVector;
     std::vector<double> yVector;
+    std::vector<double> di;
+    std::vector<double> timeFlight;
 
     //Listener
     simtime_t IniTime;
@@ -94,7 +101,9 @@ class INET_API RToFApp : public ApplicationBase, public UdpSocket::ICallback
     virtual void saveYPoints(const char *local);
     virtual const char* ConvertDoubleToString(double value1, double value2);
     virtual omnetpp::simtime_t Calibration(simtime_t StartT, simtime_t EndT, simtime_t backoffTime);
-    virtual void minMax(double *di);
+    virtual void minMax();
+    virtual void mL();
+
 
     virtual void socketDataArrived(UdpSocket *socket, Packet *packet) override;
     virtual void socketErrorArrived(UdpSocket *socket, Indication *indication) override;

@@ -7,3 +7,4 @@ out/gcc-release/UDP.o.d
 out/gcc-release/UDP.o
 .project
 out/*
+results/*

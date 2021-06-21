@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for RToF_1
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -O out -KINET4_PROJ=E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4 -DINET_IMPORT -I. -I$$\(INET4_PROJ\)/src -L$$\(INET4_PROJ\)/src -lINET$$\(D\)
+#  opp_makemake -f --deep -O out -KINET4_PROJ=E:/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/samples/inet4 -DINET_IMPORT -I. -IE:/Eigen3 -I$$\(INET4_PROJ\)/src -L$$\(INET4_PROJ\)/src -lINET$$\(D\)
 #
 
 # Name of target to be created (-o option)
@@ -16,7 +16,7 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LI
 #USERIF_LIBS = $(QTENV_LIBS)
 
 # C++ include paths (with -I)
-INCLUDE_PATH = -I. -I$(INET4_PROJ)/src
+INCLUDE_PATH = -I. -IE:/Eigen3 -I$(INET4_PROJ)/src
 
 # Additional object and library files to link with
 EXTRA_OBJS =
