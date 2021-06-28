@@ -17,7 +17,7 @@ import inet.node.inet.INetworkNode;
 import inet.physicallayer.contract.packetlevel.IRadioMedium;
 import inet.visualizer.contract.IIntegratedVisualizer;
 
-network Wireless12h_10m
+network Wireless9h_6m
 {
     parameters:
         @display("bgb=650,500;bgg=100,1,grey95");
@@ -36,42 +36,33 @@ network Wireless12h_10m
             @display("p=580,275");
         }
         host1: <default("WirelessHost")> like INetworkNode {
-            @display("p=10,0");
+            @display("p=100,100");
         }
         host2: <default("WirelessHost")> like INetworkNode {
-            @display("p=0,0");
+            @display("p=106,100");
         }
         host3: <default("WirelessHost")> like INetworkNode {
-            @display("p=20,0");
+            @display("p=94,100");
         }
         host4: <default("WirelessHost")> like INetworkNode {
-            @display("p=10,10");
+            @display("p=100,106");
         }
         host5: <default("WirelessHost")> like INetworkNode {
-            @display("p=7.5,0");
+            @display("p=100,94");
         }
         host6: <default("WirelessHost")> like INetworkNode {
-            @display("p=17.5,0");
+            @display("p=103,94.8038");
         }
         host7: <default("WirelessHost")> like INetworkNode {
-            @display("p=10,7.5");
+            @display("p=97,105.1962");
         }
         host8: <default("WirelessHost")> like INetworkNode {
-            @display("p=2.5,0");
+            @display("p=103,105.1962");
         }
         host9: <default("WirelessHost")> like INetworkNode {
-            @display("p=12.5,0");
+            @display("p=97,94.8038");
         }
         host10: <default("WirelessHost")> like INetworkNode {
-            @display("p=10,2.5");
-        }
-        host11: <default("WirelessHost")> like INetworkNode {
-            @display("p=5,0");
-        }
-        host12: <default("WirelessHost")> like INetworkNode {
-            @display("p=15,0");
-        }
-        host13: <default("WirelessHost")> like INetworkNode {
-            @display("p=10,5");
+            @display("p=105.9,94.5137");
         }
 }

@@ -17,7 +17,7 @@ import inet.node.inet.INetworkNode;
 import inet.physicallayer.contract.packetlevel.IRadioMedium;
 import inet.visualizer.contract.IIntegratedVisualizer;
 
-network Wireless6h_30m
+network Wireless3h_6m
 {
     parameters:
         @display("bgb=650,500;bgg=100,1,grey95");
@@ -36,24 +36,15 @@ network Wireless6h_30m
             @display("p=580,275");
         }
         host1: <default("WirelessHost")> like INetworkNode {
-            @display("p=30,0");
+            @display("p=100,100");
         }
         host2: <default("WirelessHost")> like INetworkNode {
-            @display("p=0,0");
+            @display("p=106,100");
         }
         host3: <default("WirelessHost")> like INetworkNode {
-            @display("p=60,0");
+            @display("p=94,100");
         }
         host4: <default("WirelessHost")> like INetworkNode {
-            @display("p=30,30");
-        }
-        host5: <default("WirelessHost")> like INetworkNode {
-            @display("p=15,0");
-        }
-        host6: <default("WirelessHost")> like INetworkNode {
-            @display("p=45,0");
-        }
-        host7: <default("WirelessHost")> like INetworkNode {
-            @display("p=30,15");
+            @display("p=100,106");
         }
 }

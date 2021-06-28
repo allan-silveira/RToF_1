@@ -600,7 +600,7 @@ void RToFApp::mL(){
 
 void RToFApp::saveXPoints(const char *local){
     int i;
-    char x[12];
+    char x[9];
     char aux[] = ",";
     int j = 0;
     std::cout << "----TESTE local: " << local << endl;
@@ -620,7 +620,7 @@ void RToFApp::saveXPoints(const char *local){
 }
 
 void RToFApp::saveYPoints(const char *local){
-    char y[12];
+    char y[9];
     char aux[] = ",";
     int j = 0;
     int k = 0;
@@ -661,3 +661,8 @@ void RToFApp::setIniTime(simtime_t time)
     IniTime = time;
 }
 // namespace inet
+
+
+
+
+

@@ -36,24 +36,24 @@ network Wireless6h_1m
             @display("p=580,275");
         }
         host1: <default("WirelessHost")> like INetworkNode {
-            @display("p=1,0");
+            @display("p=100,100");
         }
         host2: <default("WirelessHost")> like INetworkNode {
-            @display("p=0,0");
+            @display("p=101,100");
         }
         host3: <default("WirelessHost")> like INetworkNode {
-            @display("p=2,0");
+            @display("p=99,100");
         }
         host4: <default("WirelessHost")> like INetworkNode {
-            @display("p=1,1");
+            @display("p=100,101");
         }
         host5: <default("WirelessHost")> like INetworkNode {
-            @display("p=0.5,0");
+            @display("p=100,99");
         }
         host6: <default("WirelessHost")> like INetworkNode {
-            @display("p=1.5,0");
+            @display("p=100.5,99.13397");
         }
        host7: <default("WirelessHost")> like INetworkNode {
-            @display("p=1,0.5");
+            @display("p=99.5,100.86605");
         }
 }
