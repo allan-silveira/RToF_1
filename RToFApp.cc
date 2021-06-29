@@ -431,7 +431,8 @@ void RToFApp::processPacket(Packet *pk)
 
         std::cout << "TESTE do CSMA: " << backoffTime->getBackoffTime() << " TESTE do cancel Time: " << backoffTime->getInitialBackoffTime() << endl;
 
-        auto dist = distanceCalc(pk->getArrivalTime(), broadcastTime, 0.001142,  backoffTime->getBackoffTime());
+        auto measuredWithNoise = pk->getArrivalTime() + host->intuniform(-2,2)*0.000000012;
+        auto dist = distanceCalc(measuredWithNoise, broadcastTime, 0.001142,  backoffTime->getBackoffTime());
         std::cout << "Distance between hosts getting auto backoff= " << dist << endl;
 
         std::cout << " " << endl;
