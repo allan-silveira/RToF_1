@@ -532,19 +532,41 @@ void CsmaCaMacRToF::cancelBackoffTimer()
  */
 void CsmaCaMacRToF::sendDataFrame(Packet *frameToSend)
 {
-//    std::cout << "T-E-S-T BACKOFF backoffPeriod ->: " <<  backoffPeriodTransmitted << " cancelledPeriod -> " << cancelledPeriod <<endl;
-    auto rtofHeader = makeShared<CsmaCaMacRToFBackoffHeader>();
-    backoffPeriodTransmitted += cancelledPeriod;
-    rtofHeader->setBackoffTime(backoffPeriodTransmitted);
-    frameToSend->getTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMacRToF);
-    frameToSend->insertAtFront(rtofHeader);
 
-//    std::cout << "T-E-S-T BACKOFF sendDataFrame host: " <<  interfaceEntry->getMacAddress() <<endl;
-//    std::cout << "T-E-S-T BACKOFF sendDataFrame->: " <<  backoffPeriodTransmitted <<endl;
+    if(retryCounter == 0){
+        std::cout << "packet if 0 (1): " << frameToSend << endl;
 
-    EV << "sending Data frame " << frameToSend->getName() << endl;
-    radio->setRadioMode(IRadio::RADIO_MODE_TRANSMITTER);
-    sendDown(frameToSend->dup());
+        auto rtofHeader = makeShared<CsmaCaMacRToFBackoffHeader>();
+        backoffPeriodTransmitted += cancelledPeriod;
+        rtofHeader->setBackoffTime(backoffPeriodTransmitted);
+        frameToSend->getTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMacRToF);
+        frameToSend->insertAtFront(rtofHeader);
+
+        std::cout << "packet if 0 (2): " << frameToSend << endl;
+
+        EV << "sending Data frame " << frameToSend->getName() << endl;
+        radio->setRadioMode(IRadio::RADIO_MODE_TRANSMITTER);
+        sendDown(frameToSend->dup());
+    }else{
+        std::cout << "packet if 1 (1): " << frameToSend << endl;
+
+        auto rtofHeader2 = makeShared<CsmaCaMacRToFBackoffHeader>();
+
+        frameToSend->removeAtFront<CsmaCaMacRToFBackoffHeader>();
+
+        backoffPeriodTransmitted += cancelledPeriod;
+
+        rtofHeader2->setBackoffTime(backoffPeriodTransmitted);
+
+        frameToSend->getTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMacRToF);
+
+        frameToSend->insertAtFront(rtofHeader2);
+
+        radio->setRadioMode(IRadio::RADIO_MODE_TRANSMITTER);
+        sendDown(frameToSend->dup());
+    }
+
+
 }
 
 void CsmaCaMacRToF::sendAckFrame()
