@@ -431,7 +431,11 @@ void RToFApp::processPacket(Packet *pk)
 
         std::cout << "TESTE do CSMA: " << backoffTime->getBackoffTime() << " TESTE do cancel Time: " << backoffTime->getInitialBackoffTime() << endl;
 
-        auto measuredWithNoise = pk->getArrivalTime() + host->intuniform(-2,2)*0.000000012;
+        //auto measuredWithNoise = pk->getArrivalTime() + host->intuniform(-2,2)*0.0000000125;
+        auto measuredWithNoise = pk->getArrivalTime();
+
+
+
         auto dist = distanceCalc(measuredWithNoise, broadcastTime, 0.001142,  backoffTime->getBackoffTime());
         std::cout << "Distance between hosts getting auto backoff= " << dist << endl;
 
@@ -498,20 +502,11 @@ void RToFApp::minMax()
     for(int i = 0; i < xVector.size(); i++){
         if(i==0)
         {
-            // xv[0] = xVector[i] - di[i];
-            // yv[0] = yVector[i] - di[i];
-            // xv[1] = xVector[i] - di[i];
-            // yv[1] = yVector[i] - di[i];
-            // xv[2] = xVector[i] + di[i];
-            // yv[2] = yVector[i] - di[i];
-            // xv[3] = xVector[i] + di[i];
-            // yv[3] = yVector[i] - di[i];
-
             max_x = xVector[i] - di[i];
             min_x = xVector[i] + di[i];
 
             max_y = yVector[i] - di[i];
-            min_y = xVector[i] + di[i];
+            min_y = yVector[i] + di[i];
         }
         else
         {
@@ -526,46 +521,8 @@ void RToFApp::minMax()
 
             if (min_y > yVector[i] + di[i])
               min_y = yVector[i] + di[i];
-
-            // if(xv[0] < (xVector[i] - di[i]))
-            //     xv[0] = xVector[i] - di[i];
-            //
-            // else if(yv[0] < (yVector[i] - di[i]))
-            //     yv[0] = yVector[i] - di[i];
-            //
-            // else if(xv[1] < (xVector[i] - di[i]))
-            //     xv[1] = xVector[i] - di[i];
-            //
-            // else if(yv[1] > (yVector[i] - di[i]))
-            //     yv[1] = yVector[i] - di[i];
-            //
-            // else if(xv[2] > (xVector[i] + di[i]))
-            //     xv[2] = xVector[i] + di[i];
-            //
-            // else if(yv[2] > (yVector[i] - di[i]))
-            //     yv[2] = yVector[i] - di[i];
-            //
-            // else if(xv[3] > (xVector[i] + di[i]))
-            //     xv[3] = xVector[i] + di[i];
-            //
-            // else if(yv[3] < (yVector[i] - di[i]))
-            //     yv[3] = yVector[i] - di[i];
         }
     }
-    // std::cout << "testing min max v1: " << xv[0] << ", "<< yv[0] << " v2: " << xv[1] <<","<< yv[1] <<" v3: "<< xv[2]<< ","<< yv[2]<< " v4: "<< xv[3]<<","<< yv[3] << endl;
-
-    // for(int i = 0; i < xVector.size(); i++){
-    //     if(x1 > (xv[i] + di[i]))
-    //         x1 = xv[i] + di[i];
-    //     else if (x2 < (xv[i] - di[i]))
-    //         x2 = xv[i] - di[i];
-    //     else if(y1 > (yv[i] + di[i]))
-    //         y1 = yv[i] + di[i];
-    //     else if (y2 < (yv[i] - di[i]))
-    //         y2 = yv[i] - di[i];
-    // }
-    // minMax_x = (x1 + x2);
-    // minMax_y = (y1 + y2);
     minMax_x = (max_x + min_x)/2;
     minMax_y = (max_y + min_y)/2;
     std::cout << "testing min max X0: "<< minMax_x <<" Y0: " << minMax_y << endl;
