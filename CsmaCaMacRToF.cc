@@ -507,9 +507,11 @@ void CsmaCaMacRToF::decreaseBackoffPeriod()
 
 void CsmaCaMacRToF::scheduleBackoffTimer()
 {
-    if (backoffPeriod > 0) {
+    if (backoffPeriod >= 0) {
         simtime_t elapsedBackoffTime = simTime() - endBackoff->getSendingTime();
         cancelledPeriod += elapsedBackoffTime;
+        std::cout << "cancelledPeriod = " << cancelledPeriod << endl;
+        EV << "cancelledPeriod = " << cancelledPeriod << endl;
     }
 
     EV << "scheduling backoff timer\n";
@@ -538,6 +540,7 @@ void CsmaCaMacRToF::sendDataFrame(Packet *frameToSend)
 
         auto rtofHeader = makeShared<CsmaCaMacRToFBackoffHeader>();
         backoffPeriodTransmitted += cancelledPeriod;
+        std::cout << "cancelledPeriod = " << cancelledPeriod << endl;
         rtofHeader->setBackoffTime(backoffPeriodTransmitted);
         frameToSend->getTag<PacketProtocolTag>()->setProtocol(&Protocol::csmaCaMacRToF);
         frameToSend->insertAtFront(rtofHeader);
@@ -555,6 +558,8 @@ void CsmaCaMacRToF::sendDataFrame(Packet *frameToSend)
         frameToSend->removeAtFront<CsmaCaMacRToFBackoffHeader>();
 
         backoffPeriodTransmitted += cancelledPeriod;
+
+        std::cout << "cancelledPeriod when retry = " << cancelledPeriod << endl;
 
         rtofHeader2->setBackoffTime(backoffPeriodTransmitted);
 

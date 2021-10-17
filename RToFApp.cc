@@ -403,28 +403,25 @@ void RToFApp::processPacket(Packet *pk)
         broadcastTime = IniTime;
 
         cModule *host = getContainingNode(this);
-        std::cout << "host : " << host << endl;
+        std::cout << "Host that received the message: " << host << endl;
 
         auto l3Addresses = pk->getTag<L3AddressInd>();
         L3Address hostName = l3Addresses->getSrcAddress();
-        //EV << "host sender = " << hostName << endl;
-        std::cout << "host sender = " << hostName << endl;
+        std::cout << "Host that sent the message: " << hostName << endl;
         //std::cout << "position host sender = " << pk->getFullName() << endl;
-
 
         saveXPoints(pk->getFullName());
         saveYPoints(pk->getFullName());
 
         auto backoffTime = pk->getTag<backoff>(); //getting backoffTime do CSMA
 
-
         if(aux == 1){
             auto overhead = Calibration(broadcastTime, pk->getArrivalTime(), backoffTime->getBackoffTime() );//overhead from environment with two hosts is 0.001182000001
             std::cout << "overhead: " << overhead << endl;
         }
 
-        auto endTime = signalTimeTag->getEndTime();
-        std::cout << "endTime = " << endTime << endl;
+//        auto endTime = signalTimeTag->getEndTime();
+//        std::cout << "endTime = " << endTime << endl;
 
 
         backoffTest += backoffTime->getBackoffTime();
@@ -434,10 +431,8 @@ void RToFApp::processPacket(Packet *pk)
         //auto measuredWithNoise = pk->getArrivalTime() + host->intuniform(-2,2)*0.0000000125;
         auto measuredWithNoise = pk->getArrivalTime();
 
-
-
         auto dist = distanceCalc(measuredWithNoise, broadcastTime, 0.001142,  backoffTime->getBackoffTime());
-        std::cout << "Distance between hosts getting auto backoff= " << dist << endl;
+        std::cout << "Distance between hosts getting auto backoff = " << dist << endl;
 
         std::cout << " " << endl;
         std::cout << " " << endl;
@@ -451,6 +446,7 @@ void RToFApp::processPacket(Packet *pk)
 
         minMax();
         mL();
+
         //getting the real position
         IMobility *mobility = check_and_cast<IMobility *>(host->getSubmodule("mobility"));
         realPosition = mobility->getCurrentPosition();
@@ -538,7 +534,7 @@ void RToFApp::mL(){
     for(int i = 0; i < numH - 1; i++){
         A(i,1)=2*(yVector[numH - 1] - yVector[i]);
     }
-    std::cout << "testing matrix: "<< endl << A << endl;
+//    std::cout << "testing matrix: "<< endl << A << endl;
     for(int i = 0; i < numH - 1; i++){
         b(i,0) = (-(pow(xVector[i],2)) - (pow(yVector[i],2)) + (pow(di[i],2))) - (-(pow(xVector[numH - 1],2)) - (pow(yVector[numH - 1],2)) + pow(di[numH - 1],2));
     }
@@ -547,12 +543,12 @@ void RToFApp::mL(){
     Eigen::MatrixXd A_i(2,2);
     Eigen::MatrixXd A_t(2,2);
     A_t = A.transpose();
-    std::cout << "Resultado A_t: " << endl << A_t <<endl;
+//    std::cout << "Resultado A_t: " << endl << A_t <<endl;
     A_i = (A_t * A).inverse();
     A = A_i * A_t * b;
     mL_x = A(0,0);
     mL_y = A(1,0);
-    std::cout << "Resultado x,y: " << endl << mL_x << ", " << mL_y <<endl;
+    std::cout << "Resultado ML x,y: " << endl << mL_x << ", " << mL_y <<endl;
 }
 
 
@@ -567,13 +563,13 @@ void RToFApp::saveXPoints(const char *local){
     }
 
     x[i] = '\0';
-    std::cout << "----TESTE X: " << x << endl;
+//    std::cout << "----TESTE X: " << x << endl;
     xVector.push_back(atof(x));
-    for (i = 0; i < xVector.size(); i++)
-    {
-        std::cout << "VECTORRRR X: " << xVector[i] << "," << endl;
-    }
-    std::cout << " " << endl;
+//    for (i = 0; i < xVector.size(); i++)
+//    {
+//        std::cout << "VECTORRRR X: " << xVector[i] << "," << endl;
+//    }
+//    std::cout << " " << endl;
 
 }
 
@@ -593,13 +589,13 @@ void RToFApp::saveYPoints(const char *local){
     }
     y[k] = '\0';
 
-    std::cout << "----TESTE Y: " << y << endl;
+//    std::cout << "----TESTE Y: " << y << endl;
     yVector.push_back(atof(y));
-    for (unsigned int i = 0; i < yVector.size(); i++)
-    {
-        std::cout << "VECTORRRR Y: " << yVector[i] <<"," << endl;
-    }
-    std::cout << " " << endl;
+//    for (unsigned int i = 0; i < yVector.size(); i++)
+//    {
+//        std::cout << "VECTORRRR Y: " << yVector[i] <<"," << endl;
+//    }
+//    std::cout << " " << endl;
 }
 
 const char* RToFApp::ConvertDoubleToString(double value1, double value2){
